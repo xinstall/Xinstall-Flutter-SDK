@@ -1,0 +1,29 @@
+PODS:
+  - Flutter (1.0.0)
+  - xinstall_flutter_plugin (0.0.1):
+    - Flutter
+    - XinstallSDK
+  - XinstallSDK (1.1.10)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - xinstall_flutter_plugin (from `.symlinks/plugins/xinstall_flutter_plugin/ios`)
+
+SPEC REPOS:
+  trunk:
+    - XinstallSDK
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  xinstall_flutter_plugin:
+    :path: ".symlinks/plugins/xinstall_flutter_plugin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  xinstall_flutter_plugin: d036fbe9a3bfb2b5a16725cd63dbd75644b329f7
+  XinstallSDK: a95a8c2d439ceb941f2e61c11efd2afdb8d00c45
+
+PODFILE CHECKSUM: b1f7a399522c118a74b177b13c01eca692aa7e6d
+
+COCOAPODS: 1.8.4
