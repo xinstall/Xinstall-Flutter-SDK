@@ -1,6 +1,6 @@
-# XInstall_flutter_plugin
+# Flutter接入
 
-## 一 配置
+## 一、配置
 请先从[XInstall](https://xinstall.com/)申请开发者账号并创建应用，获取 AppKey
 
 在 pubspec.yaml 添加依赖,
@@ -83,16 +83,18 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 
 <img src="https://www.xinstall.com/admin/static/img/step3.7b30881b.png" width="800" height="420" alt="applinks"/><br/>
 
-* 在 `ios/Runner/AppDelegate.m` 中添加通用链接（Universal Link）回调方法，委托插件来处理：
+在 `ios/Runner/AppDelegate.m` 中添加通用链接（Universal Link）回调方法，委托插件来处理：
 
 在头部引入
-``` objc
+```objc
+
 #import <xinstall_flutter_plugin/XinstallFlutterPlugin.h>
 
 ```
 
 添加如下方法
-``` objc
+
+``` xml
 //添加此方法以获取拉起参数
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
     //判断是否通过Xinstall Universal Link 唤起App
@@ -104,15 +106,27 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 }
 ```
 
-## 二 使用
+
+## 二、初始化
+
 在 main.dart 添加  
 `import 'package:xinstall_flutter_plugin/xinstall_flutter_plugin.dart';`
 
-### 初始化
+## 三、功能集成
+
+###1.快速下载/一键拉起
+
+如果只需要快速下载功能和一键拉起，无需其它功能（携带参数安装、渠道统计），完成初始化配置即可。其他影响因素如下图
+![](https://xinstall-static-pro.oss-cn-hangzhou.aliyuncs.com/APICloud%E7%B4%A0%E6%9D%90/v1.1.0/xinstall_yjlqksaztj.png)
+
+###2.携带参数安装/唤起
+在 APP 需要安装参数时（由 web 网页中传递过来的，如邀请码、游戏房间号等动态参数），调用此接口，在回调中获取参数，参数在快速下载第一次打开应用时候，或被一键拉起时候会传递过来。
+
+
 ```
-  //  唤醒参数
+  // 唤醒参数
   String _wakeUpData;
-  //  安装参数
+  //安装参数
   String _installData;
   
   XinstallFlutterPlugin _xinstallFlutterPlugin;
@@ -122,7 +136,7 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
     super.initState();
     initPlatformState();
   }
-
+  //获取安装时候的安装参数
   Future<void> initXInstallPlugin() async {
     if (!mounted) return;
 
@@ -138,10 +152,10 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
     });
   }
 ```
-### 获取安装参数
-在 APP 需要安装参数时（由 web 网页中传递过来的，如邀请码、游戏房间号等动态参数），调用此接口，在回调中获取参数
+
+
 ```
-  //获取安装参数
+  //获取唤起（一键拉起）时候的安装参数
   void _getXInstallParam() {
     _xinstallFlutterPlugin.getInstallParam(xinstallParamHandler);
   }
@@ -155,8 +169,9 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
   }
 
 ```
+###3.高级数据统计
 
-### 注册统计
+#### 注册统计
 如需统计每个渠道的注册量（对评估渠道质量很重要），可根据自身的业务规则，在确保用户完成 APP 注册的情况下调用此接口  
 ```
   //注册统计
@@ -165,7 +180,7 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
   }
 ```
 
-### 事件统计
+#### 事件统计
 事件统计建立在渠道基础之上，主要用来统计终端用户对某些特殊业务的使用效果。调用此接口时，请使用后台创建的 “事件统计ID” 作为eventId
 ```
   //事件统计
@@ -174,6 +189,20 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
   }
 ```
 
-## 三 导出apk/api包并上传
-+ 代码集成完毕后，需要导出安装包上传 XInstall XInstall 会自动完成所有的应用配置工作。
-+ 上传完成后即可开始在线模拟测试，体验完整的App安装/拉起流程；待测试无误后，再完善下载配置信息。
+## 三、导出apk/ipa包并上传
+
+参考官网文档 
+
+[iOS集成-导出ipa包并上传](https://doc.xinstall.com/integrationGuide/iOSIntegrationGuide.html#%E5%9B%9B%E3%80%81%E5%AF%BC%E5%87%BAipa%E5%8C%85%E5%B9%B6%E4%B8%8A%E4%BC%A0)
+
+[Android-集成](https://doc.xinstall.com/integrationGuide/AndroidIntegrationGuide.html#%E5%9B%9B%E3%80%81%E5%AF%BC%E5%87%BAapk%E5%8C%85%E5%B9%B6%E4%B8%8A%E4%BC%A0)
+
+## **四、如何测试功能**
+
+参考官方文档 
+[测试集成效果](https://doc.xinstall.com/integrationGuide/comfirm.html)
+
+## **五、更多 Xinstall 进阶功能**
+若您想要自定义下载页面，或者查看数据报表等进阶功能，请移步 [Xinstall 官网](https://xinstall.com/) 查看对应文档。
+
+若您在集成过程中如有任何疑问或者困难，可以随时联系 [Xinstall 官方客服](https://wpa1.qq.com/qsw1OZaM?_type=wpa&qidian=true) 在线解决。
