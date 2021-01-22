@@ -4,10 +4,10 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'xinstall_flutter_plugin'
-  s.version          = '0.0.1'
-  s.summary          = 'A new Flutter plugin.'
+  s.version          = '1.1.0'
+  s.summary          = 'Xinstall Flutter plugin.'
   s.description      = <<-DESC
-A new Flutter plugin.
+  Xinstall Flutter plugin example.
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
@@ -16,7 +16,8 @@ A new Flutter plugin.
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'XinstallSDK'
+#  s.dependency 'XinstallSDK'
+  s.vendored_libraries = 'Classes/**/libXinstallSDK.a'
 
   s.ios.deployment_target = '9.0'
 

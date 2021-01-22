@@ -5,7 +5,7 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
     XinstallSDKPluginMethodInit,
     XinstallSDKPluginMethodGetInstallParams,
     XinstallSDKPluginMethodReportRegister,
-    XinstallSDKPluginMethodReportEffectPoint
+    XinstallSDKPluginMethodReportEventPoint
 };
 
 @interface XinstallFlutterPlugin () <XinstallDelegate>
@@ -38,7 +38,7 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
                     @"registerWakeup"         :      @(XinstallSDKPluginMethodInit),
                     @"getInstallParam"        :      @(XinstallSDKPluginMethodGetInstallParams),
                     @"reportRegister"         :      @(XinstallSDKPluginMethodReportRegister),
-                    @"reportPoint"            :      @(XinstallSDKPluginMethodReportEffectPoint)
+                    @"reportPoint"            :      @(XinstallSDKPluginMethodReportEventPoint)
                     };
 }
 
@@ -57,7 +57,12 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
                 if (time <= 0) {
                     time = 8;
                 }
-                [self installParamsResponse:[[XinstallSDK defaultManager] installData]];
+                [[XinstallSDK defaultManager] getInstallParamsWithCompletion:^(XinstallData * _Nullable installData, XinstallError * _Nullable error) {
+                    if (error) {
+                        NSLog(@"errorMsg--%@", error.errorMsg);
+                    }
+                    [self installParamsResponse:installData];
+                }];
                 NSLog(@"GetInstallParams");
                 break;
             }
@@ -67,12 +72,12 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
                 NSLog(@"ReportRegister");
                 break;
             }
-            case XinstallSDKPluginMethodReportEffectPoint:
+            case XinstallSDKPluginMethodReportEventPoint:
             {
-                NSDictionary * args = call.arguments;
-                NSNumber * pointValue = (NSNumber *) args[@"pointValue"];
-                [[XinstallSDK defaultManager] reportEffectPoint:(NSString *)args[@"pointId"] effectValue:[pointValue longValue]];
-                NSLog(@"ReportEffectPoint");
+                NSDictionary *args = call.arguments;
+                NSNumber *eventValue = (NSNumber *)args[@"pointValue"];
+                [[XinstallSDK defaultManager] reportEventPoint:(NSString *)args[@"pointId"] eventValue:[eventValue longValue]];
+                NSLog(@"reportPoint--%@",args);
                 break;
             }
             default:
