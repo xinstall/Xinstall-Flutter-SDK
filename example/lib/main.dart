@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -34,8 +36,13 @@ class _MyAppState extends State<MyApp> {
     _xinstallFlutterPlugin.init(xwakeupParamHandler);
   }
 
-  Future xwakeupParamHandler(Object data) async {
+  Future xwakeupParamHandler(Map<String, dynamic> data) async {
     setState(() {
+      var uo = data["uo"];
+      var co = data["co"];
+      var timeSpan = data["timeSpan"];
+      var channelCode = data["channelCode"];
+      
       _wakeUpData = data.toString();
 
       print(_wakeUpData);
@@ -47,8 +54,14 @@ class _MyAppState extends State<MyApp> {
     _xinstallFlutterPlugin.getInstallParam(xinstallParamHandler);
   }
 
-  Future xinstallParamHandler(Object data) async {
+  Future xinstallParamHandler(Map<String, dynamic> data) async {
     setState(() {
+      var uo = data["uo"];
+      var co = data["co"];
+      var timeSpan = data["timeSpan"];
+      var channelCode = data["channelCode"];
+      
+      
       _installData = data.toString();
 
       print(_installData);
