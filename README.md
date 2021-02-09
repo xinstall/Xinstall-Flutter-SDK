@@ -122,19 +122,20 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 
 
 ```
-  // 唤醒参数
+  //  唤醒参数
   String _wakeUpData;
-  //安装参数
+  //  安装参数
   String _installData;
-  
+
   XinstallFlutterPlugin _xinstallFlutterPlugin;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    initXInstallPlugin();
   }
-  //获取安装时候的安装参数
+
+  // 初始化时，需要传入拉起回调获取 web 端传过来的动态参数
   Future<void> initXInstallPlugin() async {
     if (!mounted) return;
 
@@ -144,11 +145,12 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 
   Future xwakeupParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      _wakeUpData = "唤醒参数--channel=" +
-          data['channelCode'] +
-          ", data=" +
-          data['bindData'].toString() +
-          "\n";
+      var uo = data["uo"];
+      var co = data["co"];
+      var timeSpan = data["timeSpan"];
+      var channelCode = data["channelCode"];
+
+      _wakeUpData = data.toString();
 
       print(_wakeUpData);
     });
@@ -157,18 +159,20 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 
 
 ```
-  //获取唤起（一键拉起）时候的安装参数
+  //获取安装参数
   void _getXInstallParam() {
     _xinstallFlutterPlugin.getInstallParam(xinstallParamHandler);
   }
 
   Future xinstallParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      _installData = "安装参数--channel=" +
-          data['channelCode'] +
-          ", data=" +
-          data['bindData'].toString() +
-          "\n";
+      var uo = data["uo"];
+      var co = data["co"];
+      var timeSpan = data["timeSpan"];
+      var channelCode = data["channelCode"];
+
+
+      _installData = data.toString();
 
       print(_installData);
     });
