@@ -35,7 +35,7 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 
 - (void)initData {
     _methodDict = @{
-                    @"registerWakeup"         :      @(XinstallSDKPluginMethodInit),
+                    @"getWakeUpParam"         :      @(XinstallSDKPluginMethodInit),
                     @"getInstallParam"        :      @(XinstallSDKPluginMethodGetInstallParams),
                     @"reportRegister"         :      @(XinstallSDKPluginMethodReportRegister),
                     @"reportPoint"            :      @(XinstallSDKPluginMethodReportEventPoint)

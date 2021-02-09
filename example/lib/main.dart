@@ -34,9 +34,13 @@ class _MyAppState extends State<MyApp> {
     _xinstallFlutterPlugin.init(xwakeupParamHandler);
   }
 
-  Future xwakeupParamHandler(Object data) async {
+  Future xwakeupParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      _wakeUpData = data.toString();
+      _wakeUpData = "唤醒参数--channel=" +
+          data['channelCode'] +
+          ", data=" +
+          data['bindData'].toString() +
+          "\n";
 
       print(_wakeUpData);
     });
@@ -47,9 +51,13 @@ class _MyAppState extends State<MyApp> {
     _xinstallFlutterPlugin.getInstallParam(xinstallParamHandler);
   }
 
-  Future xinstallParamHandler(Object data) async {
+  Future xinstallParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      _installData = data.toString();
+      _installData = "安装参数--channel=" +
+          data['channelCode'] +
+          ", data=" +
+          data['bindData'].toString() +
+          "\n";
 
       print(_installData);
     });

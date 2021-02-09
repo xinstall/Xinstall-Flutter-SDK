@@ -23,7 +23,7 @@ android: {
   defaultConfig {
     ...
     manifestPlaceholders = [
-        INSTALL_APPKEY : "XInstall为应用分配的 AppKey",
+        XINSTALL_APPKEY : "XInstall为应用分配的 AppKey",
     ]
   }    
 }
@@ -51,8 +51,6 @@ android: {
 </intent-filter>
 ```
 
-#### 混淆
-`-keep class com.xinstall.** {*; }`
 
 ### iOS平台配置 
 
@@ -144,9 +142,13 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
     _xinstallFlutterPlugin.init(xwakeupParamHandler);
   }
 
-  Future xwakeupParamHandler(Object data) async {
+  Future xwakeupParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      _wakeUpData = data.toString();
+      _wakeUpData = "唤醒参数--channel=" +
+          data['channelCode'] +
+          ", data=" +
+          data['bindData'].toString() +
+          "\n";
 
       print(_wakeUpData);
     });
@@ -160,9 +162,13 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
     _xinstallFlutterPlugin.getInstallParam(xinstallParamHandler);
   }
 
-  Future xinstallParamHandler(Object data) async {
+  Future xinstallParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      _installData = data.toString();
+      _installData = "安装参数--channel=" +
+          data['channelCode'] +
+          ", data=" +
+          data['bindData'].toString() +
+          "\n";
 
       print(_installData);
     });

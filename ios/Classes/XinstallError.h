@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, XinstallErrorType) {
+typedef NS_ENUM(NSInteger, XinstallErrorType) {
     XinstallErrorTypeConfig = -1,       // SDK 配置错误
     XinstallErrorTypeUnknow = 0,        // 未知错误
     XinstallErrorTypeNetwork,           // 网络问题（没有网络 或 网络请求超时）
