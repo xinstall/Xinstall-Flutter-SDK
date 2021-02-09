@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -17,7 +19,7 @@ class _MyAppState extends State<MyApp> {
   String _wakeUpData;
   //  安装参数
   String _installData;
-  
+
   XinstallFlutterPlugin _xinstallFlutterPlugin;
 
   @override
@@ -36,11 +38,12 @@ class _MyAppState extends State<MyApp> {
 
   Future xwakeupParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      _wakeUpData = "唤醒参数--channel=" +
-          data['channelCode'] +
-          ", data=" +
-          data['bindData'].toString() +
-          "\n";
+      var uo = data["uo"];
+      var co = data["co"];
+      var timeSpan = data["timeSpan"];
+      var channelCode = data["channelCode"];
+
+      _wakeUpData = data.toString();
 
       print(_wakeUpData);
     });
@@ -53,11 +56,13 @@ class _MyAppState extends State<MyApp> {
 
   Future xinstallParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      _installData = "安装参数--channel=" +
-          data['channelCode'] +
-          ", data=" +
-          data['bindData'].toString() +
-          "\n";
+      var uo = data["uo"];
+      var co = data["co"];
+      var timeSpan = data["timeSpan"];
+      var channelCode = data["channelCode"];
+
+
+      _installData = data.toString();
 
       print(_installData);
     });
