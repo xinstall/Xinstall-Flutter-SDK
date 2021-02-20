@@ -14,21 +14,24 @@
 //添加此方法以获取拉起参数
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
     //判断是否通过Xinstall Universal Link 唤起App
-    if ([XinstallFlutterPlugin continueUserActivity:userActivity]){//如果使用了Universal link ，此方法必写
+    if ([XinstallFlutterPlugin continueUserActivity:userActivity]){
         return YES;
     }
     //其他第三方回调；
     return YES;
 }
 
-//适用目前所有iOS版本
+//iOS9以下调用这个方法
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
+    // 处理通过Xinstall URL SchemeURL 唤起App的数据
+    [XinstallFlutterPlugin handleSchemeURL:url];
     //其他第三方回调；
     return YES;
 }
-//iOS9以上，会优先走这个方法
+//iOS9以上会优先走这个方法
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(nonnull NSDictionary *)options{
-    //判断是否通过URL Scheme 唤起App
+    // 处理通过Xinstall URL SchemeURL 唤起App的数据
+    [XinstallFlutterPlugin handleSchemeURL:url];
     //其他第三方回调；
     return YES;
 }

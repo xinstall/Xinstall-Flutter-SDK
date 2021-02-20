@@ -136,13 +136,44 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 
 #pragma mark - Xinstall API
 //通过Xinstall获取已经安装App被唤醒时的参数（如果是通过渠道页面唤醒App时，会返回渠道编号）
--(void)getWakeUpParams:(XinstallData *) appData{
+-(void)getWakeUpParams:(XinstallData *)appData{
     [self wakeUpParamsResponse:appData];
 }
 
++ (BOOL)handleSchemeURL:(NSURL *)url {
+    return [XinstallSDK handleSchemeURL:url];
+}
 
-+ (BOOL)continueUserActivity:(NSUserActivity *) userActivity {
+
++ (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
     return [XinstallSDK continueUserActivity:userActivity];
+}
+
+#pragma mark - AppDelegate
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [XinstallSDK initWithDelegate:self];
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    [XinstallFlutterPlugin handleSchemeURL:url];
+    return YES;
+}
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    [XinstallFlutterPlugin handleSchemeURL:url];
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity
+#if defined(__IPHONE_12_0)
+    restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring> > * _Nullable restorableObjects))restorationHandler
+#else
+    restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
+#endif
+{
+    [XinstallFlutterPlugin continueUserActivity:userActivity];
+    return YES;
 }
 
 @end

@@ -104,6 +104,30 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 }
 ```
 
+####3、集成Scheme
+首先，在Xcode选中Target -> Info -> URL Types,配置Xinstall 为当前应用生成的 Scheme,如图所示：
+<img src="https://doc.xinstall.com/integrationGuide/iOS6.png" width="800" height="630" alt="applinks"/><br/>
+
+代码部分：
+
+在 AppDelegate 的两个scheme回调方法中添加Xinstall的Scheme方法
+
+``` xml
+//iOS9以下调用这个方法
+-(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
+    // 处理通过Xinstall URL SchemeURL 唤起App的数据
+    [XinstallFlutterPlugin handleSchemeURL:url];
+    //其他第三方回调；
+    return YES;
+}
+//iOS9以上会优先走这个方法
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(nonnull NSDictionary *)options{
+    // 处理通过Xinstall URL SchemeURL 唤起App的数据
+    [XinstallFlutterPlugin handleSchemeURL:url];
+    //其他第三方回调；
+    return YES;
+}
+```
 
 ## 二、初始化
 
