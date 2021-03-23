@@ -173,6 +173,7 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
       var co = data["co"];
       var timeSpan = data["timeSpan"];
       var channelCode = data["channelCode"];
+      var isFirstFetch = data["isFirstFetch"];
 
       _wakeUpData = data.toString();
 
@@ -194,6 +195,7 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
       var co = data["co"];
       var timeSpan = data["timeSpan"];
       var channelCode = data["channelCode"];
+      var isFirstFetch = data["isFirstFetch"];
 
 
       _installData = data.toString();
