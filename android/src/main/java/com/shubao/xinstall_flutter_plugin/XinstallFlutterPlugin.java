@@ -152,6 +152,7 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
     result.putAll(extraData);
     result.put("channelCode", data.getChannelCode());
     result.put("timeSpan", data.getTimeSpan());
+    result.put("isFirstFetch", data.isFirstFetch());
     return result;
   }
 }
