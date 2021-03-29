@@ -1,3 +1,3 @@
-## 0.0.1
+## 0.0.5
 
-* the first version
+* 更新iOS以及Android SDK

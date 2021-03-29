@@ -45,7 +45,6 @@ class _MyAppState extends State<MyApp> {
       var isFirstFetch = data["isFirstFetch"];
 
       _wakeUpData = data.toString();
-
       print(_wakeUpData);
     });
   }
@@ -63,9 +62,7 @@ class _MyAppState extends State<MyApp> {
       var channelCode = data["channelCode"];
       var isFirstFetch = data["isFirstFetch"];
 
-
       _installData = data.toString();
-
       print(_installData);
     });
   }
@@ -85,27 +82,28 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Xinstall Plugin example'),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("wakeUpData:$_wakeUpData"),
-            Text("installData:$_installData"),
+            Text("调试日志请在控制台查看"),
+            Text("唤起参数-wakeUpData:$_wakeUpData"),
+            Text("安装参数-installData:$_installData"),
             RaisedButton(
-              child: Text("getInstall"),
+              child: Text("获取安装参数-getInstall"),
               onPressed: _getXInstallParam,
             ),
             RaisedButton(
-              child: Text("reportRegister"),
+              child: Text("注册事件上报-reportRegister"),
               onPressed: _reportRegister,
             ),
             Row(
               children: [],
             ),
             RaisedButton(
-              child: Text("reportPoint"),
+              child: Text("自定义事件上报-reportPoint"),
               onPressed: _reportPoint,
             )
           ],

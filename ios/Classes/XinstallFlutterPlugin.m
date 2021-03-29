@@ -21,6 +21,7 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
       methodChannelWithName:@"com.shubao.xinstall/xinstall_flutter_plugin"
             binaryMessenger:[registrar messenger]];
   XinstallFlutterPlugin* instance = [[XinstallFlutterPlugin alloc] init];
+  instance.flutterMethodChannel = channel;
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
@@ -110,7 +111,10 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
     if (appData.data != nil) {
         bindData = [self jsonStringWithObject:appData.data];
     }
-    NSDictionary * dict = @{@"channelCode":channelCode, @"bindData":bindData};
+    NSDictionary * dict = @{@"channelCode"  : channelCode,
+                            @"bindData"     : bindData,
+                            @"isFirstFetch" : @(appData.isFirstFetch)
+                            };
     NSLog(@"dict:%@",dict);
     return dict;
 }
@@ -136,7 +140,8 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 
 #pragma mark - Xinstall API
 //通过Xinstall获取已经安装App被唤醒时的参数（如果是通过渠道页面唤醒App时，会返回渠道编号）
--(void)getWakeUpParams:(XinstallData *)appData{
+//一键拉起时获取 H5页面 携带的动态参数，参数中如果携带渠道，也会在方法中一起返回渠道号
+- (void)xinstall_getWakeUpParams:(nullable XinstallData *)appData{
     [self wakeUpParamsResponse:appData];
 }
 

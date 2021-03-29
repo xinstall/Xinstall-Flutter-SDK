@@ -8,7 +8,7 @@
 dependencies:
   ...
   # 依赖XInstall
-  xinstall_flutter_plugin: ^0.0.2
+  xinstall_flutter_plugin: ^0.0.5
 ```
 终端进入项目目录并输入 flutter pub get 安装
 
@@ -162,7 +162,6 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
   // 初始化时，需要传入拉起回调获取 web 端传过来的动态参数
   Future<void> initXInstallPlugin() async {
     if (!mounted) return;
-
     _xinstallFlutterPlugin = XinstallFlutterPlugin.getInstance();
     _xinstallFlutterPlugin.init(xwakeupParamHandler);
   }
@@ -174,9 +173,7 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
       var timeSpan = data["timeSpan"];
       var channelCode = data["channelCode"];
       var isFirstFetch = data["isFirstFetch"];
-
       _wakeUpData = data.toString();
-
       print(_wakeUpData);
     });
   }
@@ -196,10 +193,7 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
       var timeSpan = data["timeSpan"];
       var channelCode = data["channelCode"];
       var isFirstFetch = data["isFirstFetch"];
-
-
       _installData = data.toString();
-
       print(_installData);
     });
   }
