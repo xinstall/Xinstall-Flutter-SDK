@@ -148,11 +148,14 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
 
   private static Map<String, String> xData2Map(XAppData data) {
     Map<String, String> result = new HashMap<>();
-    Map<String, String> extraData = data.getExtraData();
-    result.putAll(extraData);
-    result.put("channelCode", data.getChannelCode());
-    result.put("timeSpan", data.getTimeSpan());
-    result.put("isFirstFetch", data.isFirstFetch()+"");
+    if (data != null) {
+      Map<String, String> extraData = data.getExtraData();
+      result.putAll(extraData);
+      result.put("channelCode", data.getChannelCode());
+      result.put("timeSpan", data.getTimeSpan());
+      result.put("isFirstFetch", data.isFirstFetch()+"");
+    }
+    
     return result;
   }
 }
