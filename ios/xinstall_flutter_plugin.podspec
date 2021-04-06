@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'xinstall_flutter_plugin'
-  s.version          = '0.0.5'
+  s.version          = '0.0.6'
   s.summary          = 'Xinstall Flutter plugin.'
   s.description      = <<-DESC
   Xinstall Flutter plugin example.
