@@ -6,7 +6,7 @@ description: Demonstrates how to use the xinstall_flutter_plugin plugin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -19,7 +19,7 @@ dependencies:
 # pub依赖
 #  xinstall_flutter_plugin: ^0.0.2
 
-  cupertino_icons: ^0.1.3
+  cupertino_icons: ^0.1.2
 
 dev_dependencies:
   flutter_test:

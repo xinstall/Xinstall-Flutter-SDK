@@ -17,12 +17,14 @@ class XinstallFlutterPlugin {
   EventHandler _installHandler;
 
   static const MethodChannel _channel =
-      const MethodChannel('com.shubao.xinstall/xinstall_flutter_plugin');
+      const MethodChannel('xinstall_flutter_plugin');
 
   void init(EventHandler wakeupHandler) {
     _wakeupHandler = wakeupHandler;
+    _channel.invokeMethod("init");
     _channel.invokeMethod("getWakeUpParam");
     _channel.setMethodCallHandler(_handleMethod);
+
   }
 
   Future<Null> _handleMethod(MethodCall call) async {

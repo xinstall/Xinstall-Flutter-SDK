@@ -14,9 +14,6 @@ import com.xinstall.model.XAppData;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.embedding.engine.plugins.activity.ActivityAware;
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -27,67 +24,50 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 /**
  * FlutterPlugin
  */
-public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
+public class XinstallFlutterPlugin implements MethodCallHandler {
 
   private static MethodChannel channel;
-  private static XAppData mXAppData = null;
-  private static boolean wakeUpFlag = false;
+  private static Registrar _registrar = null;
+  private static Intent intentHolder = null;
+  private static volatile boolean INIT = false;
 
-  @java.lang.Override
-  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "com.shubao.xinstall/xinstall_flutter_plugin");
-    channel.setMethodCallHandler(this);
-
-    System.out.println("onAttachedToEngine");
-
-    XInstall.setDebug(true);
-    XInstall.init(flutterPluginBinding.getApplicationContext());
-  }
 
   public static void registerWith(Registrar registrar) {
-    channel = new MethodChannel(registrar.messenger(), "com.shubao.xinstall");
+    _registrar = registrar;
+    channel = new MethodChannel(registrar.messenger(), "xinstall_flutter_plugin");
     channel.setMethodCallHandler(new com.shubao.xinstall_flutter_plugin.XinstallFlutterPlugin());
 
     System.out.println("registerWith");
 
     registrar.addNewIntentListener(new PluginRegistry.NewIntentListener() {
-      @java.lang.Override
-      public boolean onNewIntent(android.content.Intent intent) {
-        XInstall.getWakeUpParam(intent, wakeUpAdapter);
-        return true;
+      @Override
+      public boolean onNewIntent(Intent intent) {
+        if (INIT) {
+          XInstall.getWakeUpParam(intent, wakeUpAdapter);
+        } else {
+          intentHolder = intent;
+        }
+        return false;
       }
     });
-
-    Context context = registrar.context();
-    if (context != null) {
-      XInstall.init(context);
-    }
-    Activity activity = registrar.activity();
-    if (activity != null) {
-      XInstall.getWakeUpParam(activity.getIntent(), wakeUpAdapter);
-    }
   }
 
   private static XWakeUpAdapter wakeUpAdapter = new XWakeUpAdapter() {
-    @java.lang.Override
+    @Override
     public void onWakeUp(XAppData xAppData) {
-      if (wakeUpFlag) {
-        channel.invokeMethod("onWakeupNotification", xData2Map(mXAppData));
-        mXAppData = null;
-      } else {
-        mXAppData = xAppData;
-      }
+      channel.invokeMethod("onWakeupNotification", xData2Map(xAppData));
+      intentHolder = null;
     }
   };
 
-  @java.lang.Override
+  @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
     System.out.println("onMethodCall");
 
     if (call.method.equals("getInstallParam")) {
       Integer timeout = call.argument("timeout");
       XInstall.getInstallParam(new XInstallAdapter() {
-        @java.lang.Override
+        @Override
         public void onInstall(XAppData xAppData) {
           channel.invokeMethod("onInstallNotification", xData2Map(xAppData));
         }
@@ -102,49 +82,34 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
       Integer duration = call.argument("duration");
       XInstall.reportPoint(pointId, pointValue == null ? 0 : pointValue, duration == null ? 0 : duration);
       result.success("reportPoint success");
+    } else if (call.method.equals("init")) {
+      init();
+      result.success("init success");
     } else if (call.method.equals("getWakeUpParam")) {
-      wakeUpFlag = true;
-      if (mXAppData != null) {
-        channel.invokeMethod("onWakeupNotification", xData2Map(mXAppData));
-        mXAppData = null;
-      }
-      result.success("getWakeUpParam success");
+      result.success("getWakeUpParam Deprecated");
     } else {
       result.notImplemented();
     }
   }
 
-  @java.lang.Override
-  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    channel.setMethodCallHandler(null);
-    System.out.println("onDetachedFromEngine");
-  }
-
-  @java.lang.Override
-  public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-    binding.addOnNewIntentListener(new PluginRegistry.NewIntentListener() {
-      @java.lang.Override
-      public boolean onNewIntent(Intent intent) {
-        XInstall.getWakeUpParam(intent, wakeUpAdapter);
-        return true;
+  private void init() {
+    Context context = _registrar.context();
+    if (context != null) {
+      XInstall.init(context);
+      INIT = true;
+      if (intentHolder == null) {
+        Activity activity = _registrar.activity();
+        if (activity != null) {
+          XInstall.getWakeUpParam(activity.getIntent(), wakeUpAdapter);
+        }
+      } else {
+        XInstall.getWakeUpParam(intentHolder, wakeUpAdapter);
       }
-    });
-
-    XInstall.getWakeUpParam(binding.getActivity().getIntent(), wakeUpAdapter);
+    } else {
+      System.out.println("Context is null, can not init Xinstall");
+    }
   }
 
-  @java.lang.Override
-  public void onDetachedFromActivityForConfigChanges() {
-  }
-
-  @java.lang.Override
-  public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
-  }
-
-  @java.lang.Override
-  public void onDetachedFromActivity() {
-
-  }
 
   private static Map<String, String> xData2Map(XAppData data) {
     Map<String, String> result = new HashMap<>();
@@ -153,9 +118,9 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
       result.putAll(extraData);
       result.put("channelCode", data.getChannelCode());
       result.put("timeSpan", data.getTimeSpan());
-      result.put("isFirstFetch", data.isFirstFetch()+"");
+      result.put("isFirstFetch", data.isFirstFetch() + "");
     }
-    
+
     return result;
   }
 }
