@@ -18,7 +18,7 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 @implementation XinstallFlutterPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"com.shubao.xinstall/xinstall_flutter_plugin"
+      methodChannelWithName:@"xinstall_flutter_plugin"
             binaryMessenger:[registrar messenger]];
   XinstallFlutterPlugin* instance = [[XinstallFlutterPlugin alloc] init];
   instance.flutterMethodChannel = channel;
@@ -93,16 +93,16 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 
 #pragma mark - Xinstall Notify Flutter Mehtod
 - (void)installParamsResponse:(XinstallData *) appData {
-    NSDictionary *args = [self convertInstallArguments:appData];
+    NSDictionary *args = [self convertInstallArguments:appData isWakeUp:NO];
     [self.flutterMethodChannel invokeMethod:@"onInstallNotification" arguments:args];
 }
 
 - (void)wakeUpParamsResponse:(XinstallData *) appData {
-    NSDictionary *args = [self convertInstallArguments:appData];
+    NSDictionary *args = [self convertInstallArguments:appData isWakeUp:YES];
     [self.flutterMethodChannel invokeMethod:@"onWakeupNotification" arguments:args];
 }
 
-- (NSDictionary *)convertInstallArguments:(XinstallData *) appData {
+- (NSDictionary *)convertInstallArguments:(XinstallData *) appData isWakeUp:(BOOL)wakeUp{
     NSString *channelCode = @"";
     NSString *bindData = @"";
     if (appData.channelCode != nil) {
@@ -111,9 +111,20 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
     if (appData.data != nil) {
         bindData = [self jsonStringWithObject:appData.data];
     }
-    NSDictionary * dict = @{@"channelCode"  : channelCode,
-                            @"bindData"     : bindData,
-                            @"isFirstFetch" : @(appData.isFirstFetch)
+    //唤醒
+    if (wakeUp) {
+        NSDictionary *dict = @{@"channelCode"   : channelCode,
+                               @"bindData"      : bindData,
+                               @"timeSpan"      : @(appData.timeSpan)
+                                };
+        NSLog(@"dict:%@",dict);
+        return dict;
+    }
+    //不是唤醒
+    NSDictionary *dict = @{@"channelCode"  : channelCode,
+                           @"bindData"     : bindData,
+                           @"timeSpan"     : @(appData.timeSpan),
+                           @"isFirstFetch" : @(appData.isFirstFetch)
                             };
     NSLog(@"dict:%@",dict);
     return dict;
@@ -182,3 +193,4 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 }
 
 @end
+

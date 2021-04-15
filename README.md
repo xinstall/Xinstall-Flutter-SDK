@@ -8,7 +8,7 @@
 dependencies:
   ...
   # 依赖XInstall
-  xinstall_flutter_plugin: ^0.0.8
+  xinstall_flutter_plugin: ^0.0.9
 ```
 终端进入项目目录并输入 flutter pub get 安装
 
@@ -172,7 +172,6 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
       var co = data["co"];
       var timeSpan = data["timeSpan"];
       var channelCode = data["channelCode"];
-      var isFirstFetch = data["isFirstFetch"];
       _wakeUpData = data.toString();
       print(_wakeUpData);
     });

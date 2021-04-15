@@ -42,7 +42,6 @@ class _MyAppState extends State<MyApp> {
       var co = data["co"];
       var timeSpan = data["timeSpan"];
       var channelCode = data["channelCode"];
-      var isFirstFetch = data["isFirstFetch"];
 
       _wakeUpData = data.toString();
       print(_wakeUpData);
