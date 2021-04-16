@@ -55,7 +55,7 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
   private static XWakeUpAdapter wakeUpAdapter = new XWakeUpAdapter() {
     @Override
     public void onWakeUp(XAppData xAppData) {
-      channel.invokeMethod("onWakeupNotification", xData2Map(xAppData));
+      channel.invokeMethod("onWakeupNotification", xData2Map(xAppData,false));
       intentHolder = null;
     }
   };
@@ -69,7 +69,7 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
       XInstall.getInstallParam(new XInstallAdapter() {
         @Override
         public void onInstall(XAppData xAppData) {
-          channel.invokeMethod("onInstallNotification", xData2Map(xAppData));
+          channel.invokeMethod("onInstallNotification", xData2Map(xAppData,true));
         }
       }, timeout == null ? 0 : timeout);
       result.success("getInstallParam success, wait callback");
@@ -111,14 +111,16 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
   }
 
 
-  private static Map<String, String> xData2Map(XAppData data) {
+  private static Map<String, String> xData2Map(XAppData data,boolean isInit) {
     Map<String, String> result = new HashMap<>();
     if (data != null) {
       Map<String, String> extraData = data.getExtraData();
       result.putAll(extraData);
       result.put("channelCode", data.getChannelCode());
       result.put("timeSpan", data.getTimeSpan());
-      result.put("isFirstFetch", data.isFirstFetch() + "");
+      if (isInit) {
+        result.put("isFirstFetch", data.isFirstFetch() + "");  
+      }
     }
 
     return result;
