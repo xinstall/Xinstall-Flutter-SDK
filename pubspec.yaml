@@ -1,11 +1,11 @@
 name: xinstall_flutter_plugin
 description: XInstall flutter plugin.
-version: 0.0.9
-author: Xinstall
+version: 0.1.0
 homepage: https://xinstall.com/
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
+  flutter: ">=1.20.0"
 
 dependencies:
   flutter:
