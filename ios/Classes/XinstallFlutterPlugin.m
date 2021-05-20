@@ -15,6 +15,12 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 
 @end
 
+static NSString * const XinstallThirdPlatformFlag = @"XINSTALL_THIRDPLATFORM_FLUTTER_THIRDPLATFORM_XINSTALL";
+static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_0.1.2_THIRDSDKVERSION_XINSTALL";
+static NSInteger const XinstallThirdPlatform = 8;
+static NSString * const XinstallThirdVersion = @"0.1.2";
+
+
 @implementation XinstallFlutterPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
@@ -29,6 +35,13 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
     self = [super init];
     if (self) {
         [self initData];
+        //这两句代码写在这里是为了使用一下这两个静态字符串，以免被编辑器认为没有使用而去除掉
+        if (XinstallThirdPlatformFlag.length > 0) {
+            
+        }
+        if (XinstallThirdVersionFlag.length > 0) {
+            
+        }
         [XinstallSDK initWithDelegate:self];
     }
     return self;
@@ -163,6 +176,14 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 
 + (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
     return [XinstallSDK continueUserActivity:userActivity];
+}
+
+- (NSString *)xiSdkThirdVersion {
+    return XinstallThirdVersion;
+}
+
+- (NSInteger)xiSdkType {
+    return XinstallThirdPlatform;
 }
 
 #pragma mark - AppDelegate

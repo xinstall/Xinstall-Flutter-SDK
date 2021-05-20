@@ -3,7 +3,7 @@
 //  Xinstall
 //  Xinstall 错误模型
 //  Created by Xinstall on 2021/1/7.
-//  Copyright © 2021 jiwei. All rights reserved.
+//  Copyright © 2021 Shu Bao. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
