@@ -21,11 +21,13 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleIdentifier</key>
+			<string></string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>xi8omj53s</string>
+				<string>xik180eou</string>
 			</array>
 		</dict>
 	</array>
@@ -53,6 +55,6 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>com.xinstall.APP_KEY</key>
-	<string>8omj53s</string>
+	<string>k180eou</string>
 </dict>
 </plist>

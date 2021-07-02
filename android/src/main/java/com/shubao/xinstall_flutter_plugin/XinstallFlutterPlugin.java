@@ -13,6 +13,7 @@ import com.xinstall.model.XAppData;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.json.JSONObject;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -35,7 +36,7 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
   public static void registerWith(Registrar registrar) {
     _registrar = registrar;
     channel = new MethodChannel(registrar.messenger(), "xinstall_flutter_plugin");
-    channel.setMethodCallHandler(new com.shubao.xinstall_flutter_plugin.XinstallFlutterPlugin());
+    channel.setMethodCallHandler(new XinstallFlutterPlugin());
 
     System.out.println("registerWith");
 
@@ -43,7 +44,7 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
       @Override
       public boolean onNewIntent(Intent intent) {
         if (INIT) {
-          XInstall.getWakeUpParam(intent, wakeUpAdapter);
+          XInstall.getWakeUpParam(_registrar.activity(),intent, wakeUpAdapter);
         } else {
           intentHolder = intent;
         }
@@ -100,10 +101,10 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
       if (intentHolder == null) {
         Activity activity = _registrar.activity();
         if (activity != null) {
-          XInstall.getWakeUpParam(activity.getIntent(), wakeUpAdapter);
+          XInstall.getWakeUpParam(_registrar.activity(),activity.getIntent(), wakeUpAdapter);
         }
       } else {
-        XInstall.getWakeUpParam(intentHolder, wakeUpAdapter);
+        XInstall.getWakeUpParam(_registrar.activity(),intentHolder, wakeUpAdapter);
       }
     } else {
       System.out.println("Context is null, can not init Xinstall");
@@ -116,10 +117,23 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
     if (data != null) {
       Map<String, String> extraData = data.getExtraData();
       result.putAll(extraData);
+      JSONObject jo2 = data.toJsonObject();
+      JSONObject da = new JSONObject();
+      if (data.isEmpty()){
+
+      }else {
+        try{
+          da = jo2.getJSONObject("data");
+        }catch (Exception e){
+
+        }
+      }
+      result.put("data",da.toString());
+      System.out.println(jo2.toString());
       result.put("channelCode", data.getChannelCode());
       result.put("timeSpan", data.getTimeSpan());
       if (isInit) {
-        result.put("isFirstFetch", data.isFirstFetch() + "");  
+        result.put("isFirstFetch", data.isFirstFetch() + "");
       }
     }
 

@@ -38,11 +38,9 @@ class _MyAppState extends State<MyApp> {
 
   Future xwakeupParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      var uo = data["uo"];
-      var co = data["co"];
+      var d = data["data"];
       var timeSpan = data["timeSpan"];
       var channelCode = data["channelCode"];
-
       _wakeUpData = data.toString();
       print(_wakeUpData);
     });
@@ -55,12 +53,10 @@ class _MyAppState extends State<MyApp> {
 
   Future xinstallParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      var uo = data["uo"];
-      var co = data["co"];
+      var d = data["data"];
       var timeSpan = data["timeSpan"];
       var channelCode = data["channelCode"];
       var isFirstFetch = data["isFirstFetch"];
-
       _installData = data.toString();
       print(_installData);
     });

@@ -32,23 +32,23 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.shubao.flutterexample"
+        applicationId "com.shubao.xinstallapp"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 
         manifestPlaceholders = [
-                XINSTALL_APPKEY : "qrgn70j",
+                XINSTALL_APPKEY : "8l4hkz1",
         ]
     }
 
     signingConfigs {
         keyConfig {
-            storeFile file("../app/flutter.jks")
-            storePassword "123qgm"
-            keyAlias "dou22v"
-            keyPassword "123qgm"
+            keyAlias 'dou22v'
+            keyPassword '123qgm'
+            storeFile file("../app/xinstalldemo.jks")
+            storePassword '123qgm'
         }
     }
 

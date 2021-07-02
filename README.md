@@ -8,7 +8,7 @@
 dependencies:
   ...
   # 依赖XInstall
-  xinstall_flutter_plugin: ^0.1.2
+  xinstall_flutter_plugin: ^0.1.4
 ```
 终端进入项目目录并输入 flutter pub get 安装
 
@@ -79,7 +79,7 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 
 在XCode中配置Xinstall为当前应用生成的关联域名(Associated Domains)
 
-<img src="https://www.xinstall.com/admin/static/img/step3.7b30881b.png" width="800" height="420" alt="applinks"/><br/>
+<img src="https://doc.xinstall.com/integrationGuide/iOS3.png" width="800" height="420" alt="applinks"/><br/>
 
 在 `ios/Runner/AppDelegate.m` 中添加通用链接（Universal Link）回调方法，委托插件来处理：
 
@@ -168,8 +168,7 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 
   Future xwakeupParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      var uo = data["uo"];
-      var co = data["co"];
+      var d = data["data"];
       var timeSpan = data["timeSpan"];
       var channelCode = data["channelCode"];
       _wakeUpData = data.toString();
@@ -187,8 +186,7 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 
   Future xinstallParamHandler(Map<String, dynamic> data) async {
     setState(() {
-      var uo = data["uo"];
-      var co = data["co"];
+      var d = data["data"];
       var timeSpan = data["timeSpan"];
       var channelCode = data["channelCode"];
       var isFirstFetch = data["isFirstFetch"];

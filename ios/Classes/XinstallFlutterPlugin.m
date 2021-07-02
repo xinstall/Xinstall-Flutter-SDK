@@ -16,9 +16,9 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 @end
 
 static NSString * const XinstallThirdPlatformFlag = @"XINSTALL_THIRDPLATFORM_FLUTTER_THIRDPLATFORM_XINSTALL";
-static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_0.1.2_THIRDSDKVERSION_XINSTALL";
+static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_0.1.4_THIRDSDKVERSION_XINSTALL";
 static NSInteger const XinstallThirdPlatform = 8;
-static NSString * const XinstallThirdVersion = @"0.1.2";
+static NSString * const XinstallThirdVersion = @"0.1.4";
 
 
 @implementation XinstallFlutterPlugin
@@ -123,21 +123,25 @@ static NSString * const XinstallThirdVersion = @"0.1.2";
     }
     if (appData.data != nil) {
         bindData = [self jsonStringWithObject:appData.data];
+    }else{
+        bindData = [self jsonStringWithObject:@{@"uo" : @"",@"co" : @""}];
     }
     //唤醒
     if (wakeUp) {
         NSDictionary *dict = @{@"channelCode"   : channelCode,
                                @"bindData"      : bindData,
+                               @"data"          : bindData,
                                @"timeSpan"      : @(appData.timeSpan)
                                 };
         NSLog(@"dict:%@",dict);
         return dict;
     }
     //不是唤醒
-    NSDictionary *dict = @{@"channelCode"  : channelCode,
-                           @"bindData"     : bindData,
-                           @"timeSpan"     : @(appData.timeSpan),
-                           @"isFirstFetch" : @(appData.isFirstFetch)
+    NSDictionary *dict = @{@"channelCode"   : channelCode,
+                           @"bindData"      : bindData,
+                           @"data"          : bindData,
+                           @"timeSpan"      : @(appData.timeSpan),
+                           @"isFirstFetch"  : @(appData.isFirstFetch)
                             };
     NSLog(@"dict:%@",dict);
     return dict;
