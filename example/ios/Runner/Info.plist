@@ -27,7 +27,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>xik180eou</string>
+				<string>xifsvbzqe</string>
 			</array>
 		</dict>
 	</array>
@@ -55,6 +55,6 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>com.xinstall.APP_KEY</key>
-	<string>k180eou</string>
+	<string>fsvbzqe</string>
 </dict>
 </plist>
