@@ -77,9 +77,13 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 
 <img src="https://www.xinstall.com/admin/static/img/step2.9498cb64.png" width="800" height="500" alt="config"/><br/>
 
-在XCode中配置Xinstall为当前应用生成的关联域名(Associated Domains)
+**配置 Universal links 关联域名**
 
-<img src="https://doc.xinstall.com/integrationGuide/iOS3.png" width="800" height="420" alt="applinks"/><br/>
+在 Xcode 中配置 Xinstall 为当前应用生成的关联域名（Associated Domains）：**applinks:xxxx.xinstall.top** 和 **applinks:xxxx.xinstall.net**
+
+> 具体的关联域名可在 Xinstall管理后台 - 对应的应用控制台 - iOS下载配置 页面中找到
+
+<img src="https://doc.xinstall.com/ReactNative/res/3.png"/><br/>
 
 在 `ios/Runner/AppDelegate.m` 中添加通用链接（Universal Link）回调方法，委托插件来处理：
 
