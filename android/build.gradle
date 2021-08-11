@@ -22,10 +22,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -34,4 +34,5 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    compileOnly 'androidx.annotation:annotation:1.2.0'
 }

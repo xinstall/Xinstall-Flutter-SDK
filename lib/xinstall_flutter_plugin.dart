@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 typedef Future<dynamic> EventHandler(Map<String, dynamic> data);
+typedef Future<dynamic> EventNoParamsHanlder();
 
 class XinstallFlutterPlugin {
   XinstallFlutterPlugin._();
@@ -15,6 +16,7 @@ class XinstallFlutterPlugin {
 
   EventHandler _wakeupHandler;
   EventHandler _installHandler;
+  EventNoParamsHanlder _permissionBackHandler;
 
   static const MethodChannel _channel =
       const MethodChannel('xinstall_flutter_plugin');
@@ -22,9 +24,15 @@ class XinstallFlutterPlugin {
   void init(EventHandler wakeupHandler) {
     _wakeupHandler = wakeupHandler;
     _channel.invokeMethod("init");
-    _channel.invokeMethod("getWakeUpParam");
     _channel.setMethodCallHandler(_handleMethod);
+  }
 
+  void initWithAd(Map params,EventHandler wakeupHandler ,EventNoParamsHanlder permissionBackHandler) {
+    _wakeupHandler = wakeupHandler;
+    _permissionBackHandler = permissionBackHandler;
+
+    _channel.invokeMethod("initWithAd",params);
+    _channel.setMethodCallHandler(_handleMethod);
   }
 
   Future<Null> _handleMethod(MethodCall call) async {
@@ -39,6 +47,13 @@ class XinstallFlutterPlugin {
           return defaultHandler();
         }
         return _installHandler(call.arguments.cast<String, dynamic>());
+      case "onPermissionBackNotification":
+        print("onPermissionBackNotification 通知");
+        if (_permissionBackHandler == null) {
+          return defaultHandler();
+        }
+        return _permissionBackHandler();
+
       default:
         throw new UnsupportedError("Unrecognized Event");
     }

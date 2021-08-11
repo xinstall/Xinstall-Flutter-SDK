@@ -1,5 +1,6 @@
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
+
 if (localPropertiesFile.exists()) {
     localPropertiesFile.withReader('UTF-8') { reader ->
         localProperties.load(reader)
@@ -25,7 +26,7 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
 
     lintOptions {
         disable 'InvalidPackage'
@@ -33,14 +34,15 @@ android {
 
     defaultConfig {
         applicationId "com.shubao.xinstallapp"
-        minSdkVersion 19
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 
         manifestPlaceholders = [
                 XINSTALL_APPKEY : "8l4hkz1",
         ]
+
     }
 
     signingConfigs {
@@ -63,6 +65,9 @@ android {
 }
 
 dependencies {
+
+    compileOnly 'androidx.annotation:annotation:1.1.0'
+
 //    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 

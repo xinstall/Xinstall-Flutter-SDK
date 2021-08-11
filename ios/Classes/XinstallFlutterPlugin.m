@@ -5,7 +5,8 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
     XinstallSDKPluginMethodInit,
     XinstallSDKPluginMethodGetInstallParams,
     XinstallSDKPluginMethodReportRegister,
-    XinstallSDKPluginMethodReportEventPoint
+    XinstallSDKPluginMethodReportEventPoint,
+    XinstallSDKPluginMethodInitWithAd,
 };
 
 @interface XinstallFlutterPlugin () <XinstallDelegate>
@@ -13,12 +14,15 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 @property (strong, nonatomic, readonly) NSDictionary *methodDict;
 @property (strong, nonatomic) FlutterMethodChannel * flutterMethodChannel;
 
+@property (assign, nonatomic) BOOL hasInit;
+@property (copy, nonatomic) XinstallData * cacheData;
+
 @end
 
 static NSString * const XinstallThirdPlatformFlag = @"XINSTALL_THIRDPLATFORM_FLUTTER_THIRDPLATFORM_XINSTALL";
-static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_0.1.5_THIRDSDKVERSION_XINSTALL";
+static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_1.5.0_THIRDSDKVERSION_XINSTALL";
 static NSInteger const XinstallThirdPlatform = 8;
-static NSString * const XinstallThirdVersion = @"0.1.5";
+static NSString * const XinstallThirdVersion = @"1.5.0";
 
 
 @implementation XinstallFlutterPlugin
@@ -42,17 +46,17 @@ static NSString * const XinstallThirdVersion = @"0.1.5";
         if (XinstallThirdVersionFlag.length > 0) {
             
         }
-        [XinstallSDK initWithDelegate:self];
     }
     return self;
 }
 
 - (void)initData {
     _methodDict = @{
-                    @"getWakeUpParam"         :      @(XinstallSDKPluginMethodInit),
-                    @"getInstallParam"        :      @(XinstallSDKPluginMethodGetInstallParams),
-                    @"reportRegister"         :      @(XinstallSDKPluginMethodReportRegister),
-                    @"reportPoint"            :      @(XinstallSDKPluginMethodReportEventPoint)
+                    @"initWithAd"               :      @(XinstallSDKPluginMethodInitWithAd),
+                    @"init"                     :      @(XinstallSDKPluginMethodInit),
+                    @"getInstallParam"          :      @(XinstallSDKPluginMethodGetInstallParams),
+                    @"reportRegister"           :      @(XinstallSDKPluginMethodReportRegister),
+                    @"reportPoint"              :      @(XinstallSDKPluginMethodReportEventPoint)
                     };
 }
 
@@ -62,7 +66,56 @@ static NSString * const XinstallThirdVersion = @"0.1.5";
         switch (methodType.intValue) {
             case XinstallSDKPluginMethodInit:
             {
+                XinstallData *wakeUpData;
+                @synchronized(self){
+                    if (self.cacheData) {
+                        wakeUpData = [self.cacheData copy];
+                    }
+                }
+                
+                if (wakeUpData) {
+                    NSDictionary *args = [self convertInstallArguments:wakeUpData isWakeUp:YES];
+                    [self.flutterMethodChannel invokeMethod:@"onWakeupNotification" arguments:args];
+                    self.cacheData = NULL;
+                }
+                
+                self.hasInit = true;
+                [XinstallSDK initWithDelegate:self];
+                [self.flutterMethodChannel invokeMethod:@"onPermissionBackNotification" arguments:@{}];
+    
                 NSLog(@"Init");
+                break;
+            }
+            case XinstallSDKPluginMethodInitWithAd:
+            {
+                XinstallData *wakeUpData;
+                @synchronized(self){
+                    if (self.cacheData) {
+                        wakeUpData = [self.cacheData copy];
+                    }
+                }
+                
+                if (wakeUpData) {
+                    NSDictionary *args = [self convertInstallArguments:wakeUpData isWakeUp:YES];
+                    [self.flutterMethodChannel invokeMethod:@"onWakeupNotification" arguments:args];
+                    self.cacheData = NULL;
+                }
+                
+                self.hasInit = true;
+                NSDictionary *args = call.arguments;
+                NSString *idfa = (NSString *)args[@"idfa"];
+                if (!(idfa.length > 0)) {
+                    NSLog(@"该文件并不具备内部获取idfa的能力，请到example 中的iOS_idfa中的XinstallFlutterPlugin.m替换本文件");
+                        [XinstallSDK initWithDelegate:self];
+                        [self.flutterMethodChannel invokeMethod:@"onPermissionBackNotification" arguments:@{}];
+
+                } else {
+                    [XinstallSDK initWithDelegate:self idfa:idfa];
+                    [self.flutterMethodChannel invokeMethod:@"onPermissionBackNotification" arguments:@{}];
+        
+                }
+                
+                NSLog(@"InitWithAd");
                 break;
             }
             case XinstallSDKPluginMethodGetInstallParams:
@@ -170,7 +223,15 @@ static NSString * const XinstallThirdVersion = @"0.1.5";
 //通过Xinstall获取已经安装App被唤醒时的参数（如果是通过渠道页面唤醒App时，会返回渠道编号）
 //一键拉起时获取 H5页面 携带的动态参数，参数中如果携带渠道，也会在方法中一起返回渠道号
 - (void)xinstall_getWakeUpParams:(nullable XinstallData *)appData{
-    [self wakeUpParamsResponse:appData];
+    if (self.hasInit) {
+        [self wakeUpParamsResponse:appData];
+    } else {
+        @synchronized(self){
+            self.cacheData = appData;
+        }
+        
+    }
+    
 }
 
 + (BOOL)handleSchemeURL:(NSURL *)url {
@@ -193,7 +254,7 @@ static NSString * const XinstallThirdVersion = @"0.1.5";
 #pragma mark - AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [XinstallSDK initWithDelegate:self];
+    
     return YES;
 }
 

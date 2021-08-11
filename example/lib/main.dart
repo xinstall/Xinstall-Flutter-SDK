@@ -33,7 +33,24 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     _xinstallFlutterPlugin = XinstallFlutterPlugin.getInstance();
-    _xinstallFlutterPlugin.init(xwakeupParamHandler);
+    // _xinstallFlutterPlugin.init(xwakeupParamHandler);
+    // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true},xwakeupParamHandler,xPermissionBackHandler);
+    // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid"},xwakeupParamHandler,xPermissionBackHandler);
+    // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,xPermissionBackHandler);
+    // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,null);
+
+    // _xinstallFlutterPlugin.initWithAd({"idfa":"测试外传idfa"},xwakeupParamHandler,xPermissionBackHandler);
+    // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,xPermissionBackHandler);
+    // _xinstallFlutterPlugin.initWithAd({"idfa":"测试外传idfa"},xwakeupParamHandler,null);
+    _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,null);
+
+  }
+
+  Future xPermissionBackHandler() async {
+    setState(() {
+      print("执行了获取安装参数的方法");
+      _getXInstallParam();
+    });
   }
 
   Future xwakeupParamHandler(Map<String, dynamic> data) async {
