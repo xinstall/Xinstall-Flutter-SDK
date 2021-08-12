@@ -12,7 +12,7 @@
 dependencies:
   ...
   # 依赖XInstall
-  xinstall_flutter_plugin: ^0.1.5
+  xinstall_flutter_plugin: ^1.5.0
 ```
 终端进入项目目录并输入 flutter pub get 安装
 
@@ -286,7 +286,7 @@ Future xwakeupParamHandler(Map<String, dynamic> data) async {
 
 **使用新的 initWithAd 方法，替代原先的 init 方法来进行模块的初始化**
 
-> iOS 端使用该方法时，需要传入 IDFA（在 Lua 脚本内）。您可以使用任意方式在 Lua 脚本中获取到 IDFA，例如第三方获取 IDFA 的模块。
+> iOS 端使用该方法时，需要传入 IDFA（在 Dart 脚本内）。您可以使用任意方式在 Dart 脚本中获取到 IDFA，例如第三方获取 IDFA 的模块。
 >
 
 **入参说明**：需要主动传入参数，JSON对象
