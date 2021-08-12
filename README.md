@@ -12,7 +12,7 @@
 dependencies:
   ...
   # 依赖XInstall
-  xinstall_flutter_plugin: ^0.1.5
+  xinstall_flutter_plugin: ^1.5.0
 ```
 终端进入项目目录并输入 flutter pub get 安装
 
@@ -250,23 +250,23 @@ Future xwakeupParamHandler(Map<String, dynamic> data) async {
 >
 > 注意：根据目前已有的各大主流广告平台的统计方式，目前 iOS 端和 Android 端均需要用户授权并获取一些设备关键值后才能正常进行 [ 广告平台渠道 ] 的统计，如 IDFA / OAID / GAID 等，对该行为敏感的 App 请慎重使用该功能。
 
-##### 5.1 配置工作
+##### 4.1 配置工作
 
 **iOS 端：**
 
-5.1.1 在 Xcode 中打开 iOS 端的工程，在 `Info.plist` 文件中配置一个权限作用声明（如果不配置将导致 App 启动后马上闪退）：
+4.1.1 在 Xcode 中打开 iOS 端的工程，在 `Info.plist` 文件中配置一个权限作用声明（如果不配置将导致 App 启动后马上闪退）：
 
 ```xml
 <key>NSUserTrackingUsageDescription</key>
 <string>这里是针对获取 IDFA 的作用描述，请根据实际情况填写</string>
 ```
 
-5.1.2 在 Xcode 中，找到 App 对应的「Target」，再点击「General」，然后在「Frameworks, Libraries, and Embedded Content」中，添加如下两个框架：
+4.1.2 在 Xcode 中，找到 App 对应的「Target」，再点击「General」，然后在「Frameworks, Libraries, and Embedded Content」中，添加如下两个框架：
 
 * AppTrackingTransparency.framework
 * AdSupport.framework
 
-5.1.3 `ios/Classes/XinstallFlutterPlugin.m` 替换成`example/iOS_idfa/XinstallFlutterPlugin.m`
+4.1.3 `ios/Classes/XinstallFlutterPlugin.m` 替换成`example/iOS_idfa/XinstallFlutterPlugin.m`
 
 
 
@@ -282,7 +282,7 @@ Future xwakeupParamHandler(Map<String, dynamic> data) async {
 
 2. 如果使用OAID，因为内部使用反射获取oaid 参数，所以都需要外部用户接入OAID SDK 。具体接入参考[《Android集成指南》](https://doc.xinstall.com/AD/AndroidGuide.html)
 
-##### 5.2、更换初始化方法
+##### 4.2、更换初始化方法
 
 **使用新的 initWithAd 方法，替代原先的 init 方法来进行模块的初始化**
 
@@ -382,11 +382,11 @@ Android系统，iOS系统
 
 
 
-#### 5.3、上架须知
+#### 4.3、上架须知
 
 **在使用了广告平台渠道后，若您的 App 需要上架，请认真阅读本段内容。**
 
-##### 5.3.1 iOS 端：上架 App Store
+##### 4.3.1 iOS 端：上架 App Store
 
 1. 如果您的 App 没有接入苹果广告（即在 App 中显示苹果投放的广告），那么在提交审核时，在广告标识符中，请按照下图勾选：
 
@@ -424,7 +424,7 @@ Android系统，iOS系统
 
 
 
-## w三、导出apk/ipa包并上传
+## 三、导出apk/ipa包并上传
 
 参考官网文档 
 
