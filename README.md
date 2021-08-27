@@ -12,7 +12,7 @@
 dependencies:
   ...
   # 依赖XInstall
-  xinstall_flutter_plugin: ^1.5.0
+  xinstall_flutter_plugin: ^1.5.1
 ```
 终端进入项目目录并输入 flutter pub get 安装
 
@@ -224,6 +224,10 @@ Future xwakeupParamHandler(Map<String, dynamic> data) async {
   }
 
 ```
+> 您可以在 Xinstall 管理后台对应的 App 内，看到所有的传递参数以及参数出现的次数，方便你们做运营统计分析，如通过该报表知道哪些页面或代理带来了最多客户，客户最感兴趣的 App 页面是什么等。具体参数名和值，运营人员可以和技术协商定义，或联系 Xinstall 客服咨询。具体效果如下图：
+>
+<img src="https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/paramsTable.png" width="800" height="425" alt="paramsTable"/><br/>
+
 ### 3.高级数据统计
 
 #### 注册统计
