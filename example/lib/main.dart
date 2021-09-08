@@ -91,6 +91,11 @@ class _MyAppState extends State<MyApp> {
     _xinstallFlutterPlugin.reportPoint("eventId", 1);
   }
 
+  //分享裂变事件上报
+  void _reportShareById() {
+    _xinstallFlutterPlugin.reportShareById("flutter_test");
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -119,6 +124,13 @@ class _MyAppState extends State<MyApp> {
             RaisedButton(
               child: Text("自定义事件上报-reportPoint"),
               onPressed: _reportPoint,
+            ),
+            Row(
+              children: [],
+            ),
+            RaisedButton(
+              child: Text("分享裂变事件上报-reportShareById"),
+              onPressed: _reportShareById,
             )
           ],
         ),

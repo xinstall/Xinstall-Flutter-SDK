@@ -116,6 +116,10 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
       // 广告初始化
       initWithAd(call,result);
 
+    } else if (call.method.equals("reportShareById")){
+      // 分享裂变事件上报
+      reportShareById(call,result);
+
     } else if (call.method.equals("setLog")){
           // 设置Log 答应
       runInUIThread(new Runnable() {
@@ -139,6 +143,12 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
     Integer duration = call.argument("duration");
     XInstall.reportPoint(pointId, pointValue == null ? 0 : pointValue, duration == null ? 0 : duration);
     result.success("reportPoint success");
+  }
+
+  private void reportShareById(MethodCall call, Result result) {
+    String userId = call.argument("userId");
+    XInstall.reportShareById(userId);
+    result.success("reportShareById success");
   }
 
   private void getInstallParams(final MethodCall call) {

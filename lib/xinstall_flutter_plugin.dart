@@ -77,4 +77,10 @@ class XinstallFlutterPlugin {
     args["duration"] = duration;
     _channel.invokeMethod('reportPoint', args);
   }
+
+  void reportShareById(String userId) {
+    var args = new Map();
+    args["userId"] = userId;
+    _channel.invokeMethod('reportShareById', args);
+  }
 }
