@@ -18,6 +18,8 @@ class XinstallFlutterPlugin {
   EventHandler _installHandler;
   EventNoParamsHanlder _permissionBackHandler;
 
+  bool _isNew;
+
   static const MethodChannel _channel =
       const MethodChannel('xinstall_flutter_plugin');
 
@@ -25,6 +27,10 @@ class XinstallFlutterPlugin {
     _wakeupHandler = wakeupHandler;
     _channel.invokeMethod("init");
     _channel.setMethodCallHandler(_handleMethod);
+  }
+
+  void isNewWakeUp(bool isNew) {
+    _isNew = isNew;
   }
 
   void initWithAd(Map params,EventHandler wakeupHandler ,EventNoParamsHanlder permissionBackHandler) {
@@ -38,10 +44,23 @@ class XinstallFlutterPlugin {
   Future<Null> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case "onWakeupNotification":
+        if (_isNew == true) {
+          return defaultHandler();  
+        }
         if (_wakeupHandler == null) {
           return defaultHandler();
         }
         return _wakeupHandler(call.arguments.cast<String, dynamic>());
+      case "onWakeupEvenErrorAlsoCallBackNotification":
+        if (_isNew == false) {
+          return defaultHandler();
+        }
+
+        if (_wakeupHandler == null) {
+          return defaultHandler();
+        }
+        return _wakeupHandler(call.arguments.cast<String, dynamic>());
+
       case "onInstallNotification":
         if (_installHandler == null) {
           return defaultHandler();
@@ -78,9 +97,9 @@ class XinstallFlutterPlugin {
     _channel.invokeMethod('reportPoint', args);
   }
 
-  void reportShareById(String userId) {
+  void reportShareByXinShareId(String userId) {
     var args = new Map();
     args["userId"] = userId;
-    _channel.invokeMethod('reportShareById', args);
+    _channel.invokeMethod('reportShareByXinShareId', args);
   }
 }

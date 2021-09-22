@@ -33,7 +33,8 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     _xinstallFlutterPlugin = XinstallFlutterPlugin.getInstance();
-    _xinstallFlutterPlugin.init(xwakeupParamHandler);
+    _xinstallFlutterPlugin.init(xwakeupDetailParamHandler);
+    _xinstallFlutterPlugin.isNewWakeUp(true);
 
     // 广告用户接入初始化方法
     // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true},xwakeupParamHandler,xPermissionBackHandler);
@@ -65,6 +66,23 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future xwakeupDetailParamHandler(Map<String, dynamic> data) async {
+  	setState((){
+  		var wakeUpData = data["wakeUpData"];
+  		var error = data["error"];
+  		if (error != null && error != "" && error != "{}") {
+  			// 有值
+  			print(data.toString());
+  			_wakeUpData = data.toString();
+  		} else {
+  			// 无值
+  			print(data.toString());
+  			_wakeUpData = error.toString();
+  		}
+  	});
+  }
+
+
   //获取安装参数
   void _getXInstallParam() {
     _xinstallFlutterPlugin.getInstallParam(xinstallParamHandler);
@@ -92,8 +110,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   //分享裂变事件上报
-  void _reportShareById() {
-    _xinstallFlutterPlugin.reportShareById("flutter_test");
+  void _reportShareByXinShareId() {
+    _xinstallFlutterPlugin.reportShareByXinShareId("flutter_test");
   }
 
   @override
@@ -129,8 +147,8 @@ class _MyAppState extends State<MyApp> {
               children: [],
             ),
             RaisedButton(
-              child: Text("分享裂变事件上报-reportShareById"),
-              onPressed: _reportShareById,
+              child: Text("分享裂变事件上报-reportShareByXinShareId"),
+              onPressed: _reportShareByXinShareId,
             )
           ],
         ),
