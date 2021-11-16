@@ -12,10 +12,24 @@ buildscript {
     }
 }
 
+def getCurrentProjectDir() {
+    String result = ""
+    rootProject.allprojects { project ->
+        if (project.properties.get("identityPath").toString() == ":xinstall_flutter_plugin") {
+            result = project.properties.get("projectDir").toString()
+        }
+    }
+    return result
+}
+
 rootProject.allprojects {
+    def dir = getCurrentProjectDir()
     repositories {
         google()
         jcenter()
+        maven {
+            url "$dir/libs"
+        }
     }
 }
 
@@ -33,6 +47,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+//    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     compileOnly 'androidx.annotation:annotation:1.1.0'
+
+    implementation "com.xinstall:xinstall_flutter_plugin:1.5.2"
 }

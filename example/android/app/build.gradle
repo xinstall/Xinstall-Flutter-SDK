@@ -67,8 +67,7 @@ android {
 dependencies {
 
     compileOnly 'androidx.annotation:annotation:1.1.0'
-
-//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.xinstall:xinstall_flutter_plugin:1.5.2"
 }
 
 flutter {
