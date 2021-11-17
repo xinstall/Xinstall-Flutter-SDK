@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/services.dart';
 
@@ -15,20 +16,19 @@ class XinstallFlutterPlugin {
   Future defaultHandler() async {}
 
   EventHandler _wakeupHandler;
+  EventHandler _wakeupDetailHanlder;
   EventHandler _installHandler;
   EventNoParamsHanlder _permissionBackHandler;
 
   static const MethodChannel _channel =
       const MethodChannel('xinstall_flutter_plugin');
 
-  void init(EventHandler wakeupHandler) {
-    _wakeupHandler = wakeupHandler;
+  void init() {
     _channel.invokeMethod("init");
     _channel.setMethodCallHandler(_handleMethod);
   }
 
-  void initWithAd(Map params,EventHandler wakeupHandler ,EventNoParamsHanlder permissionBackHandler) {
-    _wakeupHandler = wakeupHandler;
+  void initWithAd(Map params,EventNoParamsHanlder permissionBackHandler) {
     _permissionBackHandler = permissionBackHandler;
 
     _channel.invokeMethod("initWithAd",params);
@@ -42,6 +42,11 @@ class XinstallFlutterPlugin {
           return defaultHandler();
         }
         return _wakeupHandler(call.arguments.cast<String, dynamic>());
+      case "onWakeupDetailNotification":
+        if (_wakeupDetailHanlder == null) {
+          return defaultHandler();
+        }
+        return _wakeupDetailHanlder(call.arguments.cast<String, dynamic>());
       case "onInstallNotification":
         if (_installHandler == null) {
           return defaultHandler();
@@ -66,6 +71,22 @@ class XinstallFlutterPlugin {
     _channel.invokeMethod('getInstallParam', args);
   }
 
+  void registerWakeUpHandler(EventHandler wakeupHandler) {
+    if (this._wakeupHandler != null) {
+       print("重复注册WakeUp，只有最近一次回调会有效");
+    }
+    this._wakeupHandler = wakeupHandler;
+    _channel.invokeMethod('registerWakeUpHandler');
+  }
+  
+  void registerWakeUpDetailHandler(EventHandler wakeupDetailHandler) {
+    if(this._wakeupDetailHanlder != null) {
+      print("重复注册wakeUpDetail, 只有最近一次回调会有效");
+    }
+    this._wakeupDetailHanlder = wakeupDetailHandler;
+    _channel.invokeMethod("registerWakeUpDetailHandler");
+  }
+
   void reportRegister() {
     _channel.invokeMethod('reportRegister');
   }
@@ -76,5 +97,11 @@ class XinstallFlutterPlugin {
     args["pointValue"] = pointValue;
     args["duration"] = duration;
     _channel.invokeMethod('reportPoint', args);
+  }
+
+  void reportShareByXinShareId(String shareId) {
+    var args = new Map();
+    args["shareId"] = shareId;
+    _channel.invokeMethod('reportShareByXinShareId',args);
   }
 }

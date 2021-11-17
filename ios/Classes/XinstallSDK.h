@@ -1,4 +1,4 @@
-//  1.5.1
+//  1.5.5
 //  XinstallSDK.h
 //  XinstallSDK
 //
@@ -19,8 +19,19 @@ NS_ASSUME_NONNULL_BEGIN
  * 一键拉起时获取 H5页面 携带的动态参数，参数中如果携带渠道，也会在方法中一起返回渠道号
  * @param appData 动态参数对象
  * appData 的 uo co 数据如果前端传入不是正常的json 数据，会返回前端传入的 String ，如果为正常 JSON 数据 会返回字典或数组
+ * @discuss 【注意】该方法只会在成功获取到拉起参数时，才会回调。如果无法成功获取到拉起参数，则不会执行该回调方法。
  */
 - (void)xinstall_getWakeUpParams:(nullable XinstallData *)appData;
+
+/**
+ * 一键拉起时获取 H5页面 携带的动态参数，参数中如果携带渠道，也会在方法中一起返回渠道号
+ * @param appData 动态参数对象
+ * @param error 如果没有正确处理唤醒参数，则 appData == nil 且 error != nil ；如果正确处理了唤醒参数，则 appData != nil 且 error == nil
+ * appData 的 uo co 数据如果前端传入不是正常的json 数据，会返回前端传入的 String ，如果为正常 JSON 数据 会返回字典或数组
+ * @discuss 【注意】该方法无论是否成功获取到拉起参数，均会回调。
+ * @discuss 【注意】如果同时实现了 「- xinstall_getWakeUpParams:」 和 「- xinstall_getWakeUpParams:error:」方法，那么只会回调「- xinstall_getWakeUpParams:error:」方法
+ */
+- (void)xinstall_getWakeUpParams:(nullable XinstallData *)appData error:(nullable XinstallError *)error;
 
 /**
  * 安装时获取 H5页面 携带的动态参数，参数中如果携带渠道，也会在方法中一起返回渠道号
@@ -71,6 +82,19 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)initWithDelegate:(id<XinstallDelegate> _Nonnull)delegate idfa:(NSString *)idfa;
 
 /**
+ * 【重要】初始化 Xinstall SDK（支持广告平台渠道。若您不使用广告平台渠道，请使用 + initWithDelegate: 方法，否则可能导致上架 App Store 时被拒绝）
+ * 该方法只需要调用一次，调用时机尽量提前，一般在 App 启动时调用该方法进行初始化
+ * 调用该方法前，需在 Info.plist 文件中配置键值对，键为固定值 com.xinstall.APP_KEY ，值为 Xinstall 后台对应应用的 appKey，可在 Xinstall 官方后台获取
+ *
+ * @param delegate 实现 XinstallDelegate 的对象
+ * @param idfa 当前手机 IDFA 字符串，可以为空
+ * @param asaToken 当前手机 ASA token，可以为空
+ *
+ * @discuss [该方法和 + initWithDelegate: 的区别]：使用该方法初始化时，需要根据文档获取 IDFA 后进行初始化，支持上报广告平台渠道的数据（在 Xinstall 管理后台新建的广告平台渠道）；支持上报 ASA 渠道的数据
+ */
++ (void)initWithDelegate:(id<XinstallDelegate> _Nonnull)delegate idfa:(nullable NSString *)idfa asaToken:(nullable NSString *)asaToken;
+
+/**
  * 处理 通用链接
  * @param userActivity 由 AppDelegate 和 SceneDelegate 内对应方法中传入
  * @return 本次唤起是否被 Xinstall 正常处理
@@ -105,6 +129,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param eventValue 事件值（精确到整数）
  */
 - (void)reportEventPoint:(NSString *_Nonnull)eventID eventValue:(long)eventValue;
+
+/**
+ * 上报一次分享id（建议在分享成功后上报）
+ *
+ * @param xinShareId 分享id
+ */
+- (void)reportShareByXinShareId:(NSString *_Nonnull)xinShareId;
 
 + (BOOL)handleSchemeURL:(NSURL *_Nullable)URL;
 

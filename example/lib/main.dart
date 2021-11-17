@@ -15,8 +15,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  //  唤醒参数
+  // 唤醒参数
   String _wakeUpData;
+
+  // 唤醒参数
+  String _wakeUpDetailData;
+
   //  安装参数
   String _installData;
 
@@ -42,8 +46,10 @@ class _MyAppState extends State<MyApp> {
     // _xinstallFlutterPlugin.initWithAd({"idfa":"测试外传idfa"},xwakeupParamHandler,xPermissionBackHandler);
     // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,xPermissionBackHandler);
     // _xinstallFlutterPlugin.initWithAd({"idfa":"测试外传idfa"},xwakeupParamHandler,null);
-    _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,null);
+    _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},null);
 
+    _wakeUpRegister();
+    _wakeUpDetailRegister();
   }
 
   Future xPermissionBackHandler() async {
@@ -60,6 +66,13 @@ class _MyAppState extends State<MyApp> {
       var channelCode = data["channelCode"];
       _wakeUpData = data.toString();
       print(_wakeUpData);
+    });
+  }
+
+  Future xwakeupDetailParamHandler(Map<String, dynamic> data) async {
+    setState(() {
+      _wakeUpDetailData = data.toString();
+      print(_wakeUpDetailData);
     });
   }
 
@@ -89,6 +102,20 @@ class _MyAppState extends State<MyApp> {
     _xinstallFlutterPlugin.reportPoint("eventId", 1);
   }
 
+  //注册wakeup 函数
+  void _wakeUpRegister() {
+    _xinstallFlutterPlugin.registerWakeUpHandler(xwakeupParamHandler);
+  }
+
+  void _wakeUpDetailRegister() {
+    _xinstallFlutterPlugin.registerWakeUpDetailHandler(xwakeupDetailParamHandler);
+  }
+
+  // 分享裂变上报
+  void _reportShareByXinShareId() {
+    _xinstallFlutterPlugin.reportShareByXinShareId("Flutter Test");
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -102,6 +129,7 @@ class _MyAppState extends State<MyApp> {
           children: [
             Text("调试日志请在控制台查看"),
             Text("唤起参数-wakeUpData:$_wakeUpData"),
+            Text("唤醒参数-wakeUpDetailData:$_wakeUpDetailData"),
             Text("安装参数-installData:$_installData"),
             RaisedButton(
               child: Text("获取安装参数-getInstall"),
@@ -117,7 +145,15 @@ class _MyAppState extends State<MyApp> {
             RaisedButton(
               child: Text("自定义事件上报-reportPoint"),
               onPressed: _reportPoint,
+            ),
+            Row(
+              children: [],
+            ),
+            RaisedButton(
+              child: Text("分享裂变上报-reportShareByXinShareId"),
+              onPressed: _reportShareByXinShareId,
             )
+
           ],
         ),
       ),

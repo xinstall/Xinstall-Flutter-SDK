@@ -28,6 +28,7 @@
     //其他第三方回调；
     return YES;
 }
+
 //iOS9以上会优先走这个方法
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(nonnull NSDictionary *)options{
     // 处理通过Xinstall URL SchemeURL 唤起App的数据

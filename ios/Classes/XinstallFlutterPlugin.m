@@ -7,6 +7,9 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
     XinstallSDKPluginMethodReportRegister,
     XinstallSDKPluginMethodReportEventPoint,
     XinstallSDKPluginMethodInitWithAd,
+    XinstallSDKPluginMethodRegisterWakeUpHandler,
+    XinstallSDKPluginMethodRegisterWakeUpDetailHandler,
+    XinstallSDKPluginMethodReportShareByXinShareId
 };
 
 @interface XinstallFlutterPlugin () <XinstallDelegate>
@@ -14,8 +17,11 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 @property (strong, nonatomic, readonly) NSDictionary *methodDict;
 @property (strong, nonatomic) FlutterMethodChannel * flutterMethodChannel;
 
-@property (assign, nonatomic) BOOL hasInit;
-@property (copy, nonatomic) XinstallData * cacheData;
+@property (assign, nonatomic) BOOL hasRegister;
+@property (assign, nonatomic) BOOL hasDetailRegister;
+@property (copy, nonatomic) XinstallData * wakeupData;
+@property (copy, nonatomic) XinstallData * wakeupDetailData;
+@property (copy, nonatomic) XinstallError * wakeupDetailError;
 
 @end
 
@@ -52,11 +58,14 @@ static NSString * const XinstallThirdVersion = @"1.5.2";
 
 - (void)initData {
     _methodDict = @{
-                    @"initWithAd"               :      @(XinstallSDKPluginMethodInitWithAd),
-                    @"init"                     :      @(XinstallSDKPluginMethodInit),
-                    @"getInstallParam"          :      @(XinstallSDKPluginMethodGetInstallParams),
-                    @"reportRegister"           :      @(XinstallSDKPluginMethodReportRegister),
-                    @"reportPoint"              :      @(XinstallSDKPluginMethodReportEventPoint)
+                    @"initWithAd"                  :      @(XinstallSDKPluginMethodInitWithAd),
+                    @"init"                        :      @(XinstallSDKPluginMethodInit),
+                    @"getInstallParam"             :      @(XinstallSDKPluginMethodGetInstallParams),
+                    @"registerWakeUpHandler"       :      @(XinstallSDKPluginMethodRegisterWakeUpHandler),
+                    @"registerWakeUpDetailHandler" :      @(XinstallSDKPluginMethodRegisterWakeUpDetailHandler),
+                    @"reportRegister"              :      @(XinstallSDKPluginMethodReportRegister),
+                    @"reportPoint"                 :      @(XinstallSDKPluginMethodReportEventPoint),
+                    @"reportShareByXinShareId"     :      @(XinstallSDKPluginMethodReportShareByXinShareId)
                     };
 }
 
@@ -66,42 +75,64 @@ static NSString * const XinstallThirdVersion = @"1.5.2";
         switch (methodType.intValue) {
             case XinstallSDKPluginMethodInit:
             {
-                XinstallData *wakeUpData;
-                @synchronized(self){
-                    if (self.cacheData) {
-                        wakeUpData = [self.cacheData copy];
-                    }
-                }
-                
-                if (wakeUpData) {
-                    NSDictionary *args = [self convertInstallArguments:wakeUpData isWakeUp:YES];
-                    [self.flutterMethodChannel invokeMethod:@"onWakeupNotification" arguments:args];
-                    self.cacheData = NULL;
-                }
-                
-                self.hasInit = true;
                 [XinstallSDK initWithDelegate:self];
                 [self.flutterMethodChannel invokeMethod:@"onPermissionBackNotification" arguments:@{}];
     
                 NSLog(@"Init");
                 break;
             }
-            case XinstallSDKPluginMethodInitWithAd:
+            case XinstallSDKPluginMethodRegisterWakeUpDetailHandler:
             {
-                XinstallData *wakeUpData;
-                @synchronized(self){
-                    if (self.cacheData) {
-                        wakeUpData = [self.cacheData copy];
+                self.hasDetailRegister = YES;
+                XinstallData *wakeupDetailData;
+                XinstallError *wakeupDetailError;
+                
+                @synchronized (self) {
+                    if (self.wakeupDetailData) {
+                        wakeupDetailData = [self.wakeupDetailData copy];
+                    }
+                    if (self.wakeupDetailError) {
+                        wakeupDetailError = [self.wakeupDetailError copy];
                     }
                 }
                 
-                if (wakeUpData) {
-                    NSDictionary *args = [self convertInstallArguments:wakeUpData isWakeUp:YES];
-                    [self.flutterMethodChannel invokeMethod:@"onWakeupNotification" arguments:args];
-                    self.cacheData = NULL;
+                if (wakeupDetailData != NULL || wakeupDetailError != NULL) {
+                    NSDictionary *args = @{};
+                    NSDictionary *error = @{};
+                    if (wakeupDetailData) {
+                        args = [self convertDataArguments:wakeupDetailData isWakeUp:YES];
+                    }
+                    if (wakeupDetailError) {
+                        error = @{@"errorType":@(wakeupDetailError.type),@"errorMsg":wakeupDetailError.errorMsg};
+                    }
+                    NSDictionary *params = @{@"wakeUpData":args,@"error":error};
+                    [self.flutterMethodChannel invokeMethod:@"onWakeupDetailNotification" arguments:params];
+                    self.wakeupDetailData = NULL;
+                    self.wakeupDetailError = NULL;
                 }
                 
-                self.hasInit = true;
+                break;
+            }
+            case XinstallSDKPluginMethodRegisterWakeUpHandler:
+            {
+                self.hasRegister = YES;
+                XinstallData *wakeUpData;
+                @synchronized(self){
+                    if (self.wakeupData) {
+                        wakeUpData = [self.wakeupData copy];
+                    }
+                }
+
+                if (wakeUpData) {
+                    NSDictionary *args = [self convertDataArguments:wakeUpData isWakeUp:YES];
+                    [self.flutterMethodChannel invokeMethod:@"onWakeupNotification" arguments:args];
+                    self.wakeupData = NULL;
+                }
+                break;
+            }
+            case XinstallSDKPluginMethodInitWithAd:
+            {
+                
                 NSDictionary *args = call.arguments;
                 NSString *idfa = (NSString *)args[@"idfa"];
                 if (!(idfa.length > 0)) {
@@ -120,10 +151,15 @@ static NSString * const XinstallThirdVersion = @"1.5.2";
             }
             case XinstallSDKPluginMethodGetInstallParams:
             {
-                int time = (int) call.arguments[@"timeout"];
+                int time = 0;
+                if (call.arguments[@"timeout"] != nil) {
+                    time = [call.arguments[@"timeout"] intValue];
+                }
+                 
                 if (time <= 0) {
                     time = 8;
                 }
+                
                 [[XinstallSDK defaultManager] getInstallParamsWithCompletion:^(XinstallData * _Nullable installData, XinstallError * _Nullable error) {
                     if (error) {
                         NSLog(@"errorMsg--%@", error.errorMsg);
@@ -147,6 +183,14 @@ static NSString * const XinstallThirdVersion = @"1.5.2";
                 NSLog(@"reportPoint--%@",args);
                 break;
             }
+            case XinstallSDKPluginMethodReportShareByXinShareId:
+            {
+                NSDictionary *args = call.arguments;
+                NSString *shareId = (NSString *)args[@"shareId"];
+                [[XinstallSDK defaultManager] reportShareByXinShareId:shareId];
+                NSLog(@"reportShareByXinShareId--%@",args);
+                break;
+            }
             default:
             {
                 break;
@@ -159,16 +203,32 @@ static NSString * const XinstallThirdVersion = @"1.5.2";
 
 #pragma mark - Xinstall Notify Flutter Mehtod
 - (void)installParamsResponse:(XinstallData *) appData {
-    NSDictionary *args = [self convertInstallArguments:appData isWakeUp:NO];
+    NSDictionary *args = [self convertDataArguments:appData isWakeUp:NO];
     [self.flutterMethodChannel invokeMethod:@"onInstallNotification" arguments:args];
 }
 
 - (void)wakeUpParamsResponse:(XinstallData *) appData {
-    NSDictionary *args = [self convertInstallArguments:appData isWakeUp:YES];
+    NSDictionary *args = [self convertDataArguments:appData isWakeUp:YES];
     [self.flutterMethodChannel invokeMethod:@"onWakeupNotification" arguments:args];
 }
 
-- (NSDictionary *)convertInstallArguments:(XinstallData *) appData isWakeUp:(BOOL)wakeUp{
+- (void)wakeUpDetailParamsResponse:(XinstallData *)wakeupDetailData withError:(XinstallError *)wakeupDetailError {
+    if (wakeupDetailData != NULL || wakeupDetailError != NULL) {
+        NSDictionary *args = @{};
+        NSDictionary *error = @{};
+        if (wakeupDetailData) {
+            args = [self convertDataArguments:wakeupDetailData isWakeUp:YES];
+        }
+        if (wakeupDetailError) {
+            error = @{@"errorType":@(wakeupDetailError.type),@"errorMsg":wakeupDetailError.errorMsg};
+        }
+        NSDictionary *params = @{@"wakeUpData":args,@"error":error};
+        [self.flutterMethodChannel invokeMethod:@"onWakeupDetailNotification" arguments:params];
+        self.wakeupData = NULL;
+    }
+}
+
+- (NSDictionary *)convertDataArguments:(XinstallData *) appData isWakeUp:(BOOL)wakeUp{
     NSString *channelCode = @"";
     NSString *bindData = @"";
     if (appData.channelCode != nil) {
@@ -220,18 +280,11 @@ static NSString * const XinstallThirdVersion = @"1.5.2";
 }
 
 #pragma mark - Xinstall API
-//通过Xinstall获取已经安装App被唤醒时的参数（如果是通过渠道页面唤醒App时，会返回渠道编号）
-//一键拉起时获取 H5页面 携带的动态参数，参数中如果携带渠道，也会在方法中一起返回渠道号
-- (void)xinstall_getWakeUpParams:(nullable XinstallData *)appData{
-    if (self.hasInit) {
+- (void)xinstall_getWakeUpParams:(XinstallData *)appData error:(XinstallError *)error {
+    if (appData != NULL) {
         [self wakeUpParamsResponse:appData];
-    } else {
-        @synchronized(self){
-            self.cacheData = appData;
-        }
-        
     }
-    
+    [self wakeUpDetailParamsResponse:appData withError:error];
 }
 
 + (BOOL)handleSchemeURL:(NSURL *)url {
