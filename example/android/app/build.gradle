@@ -40,7 +40,7 @@ android {
         versionName flutterVersionName
 
         manifestPlaceholders = [
-                XINSTALL_APPKEY : "8l4hkz1",
+                XINSTALL_APPKEY : "faj9nq4",
         ]
 
     }
@@ -64,11 +64,10 @@ android {
     }
 }
 
-dependencies {
-
-    compileOnly 'androidx.annotation:annotation:1.1.0'
-    implementation "com.xinstall:xinstall_flutter_plugin:1.5.2"
-}
+//dependencies {
+//    compileOnly 'androidx.annotation:annotation:1.1.0'
+//    implementation "com.xinstall:xinstall_flutter_plugin:1.5.2"
+//}
 
 flutter {
     source '../..'

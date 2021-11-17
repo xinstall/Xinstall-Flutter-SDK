@@ -6,4 +6,7 @@
 -keep class io.flutter.**  { *; }
 -keep class io.flutter.plugins.**  { *; }
 
--keep class com.xinstall.** {*; }
+-dontwarn com.android.installreferrer.**
+-dontwarn com.bun.miitmdid.core.JLibrary.**
+-dontwarn com.google.android.gms.**
+-dontwarn com.google.android.play.core.**

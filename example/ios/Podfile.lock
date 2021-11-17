@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - xinstall_flutter_plugin (1.5.1):
+  - xinstall_flutter_plugin (1.5.2):
     - Flutter
 
 DEPENDENCIES:

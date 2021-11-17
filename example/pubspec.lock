@@ -150,12 +150,12 @@ packages:
     source: hosted
     version: "2.1.0"
   xinstall_flutter_plugin:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "1.5.1"
+    version: "1.5.2"
 sdks:
   dart: ">=2.12.0 <3.0.0"
   flutter: ">=1.20.0"

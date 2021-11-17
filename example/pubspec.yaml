@@ -13,8 +13,8 @@ dependencies:
     sdk: flutter
 
 # 本地依赖
-#  xinstall_flutter_plugin:
-#    path: ../
+  xinstall_flutter_plugin:
+    path: ../
   
 # pub依赖
 #  xinstall_flutter_plugin: ^0.0.2
