@@ -13,6 +13,7 @@ import com.xinstall.XInstall;
 import com.xinstall.listener.XInstallAdapter;
 import com.xinstall.listener.XWakeUpAdapter;
 import com.xinstall.model.XAppData;
+import com.xinstall.model.XAppError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -83,7 +84,16 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
   private static XWakeUpAdapter wakeUpAdapter = new XWakeUpAdapter() {
     @Override
     public void onWakeUp(XAppData xAppData) {
+      super.onWakeUp(xAppData);
       channel.invokeMethod("onWakeupNotification", xData2Map(xAppData,false));
+      wakeupIntent = null;
+      wakeupActivity = null;
+    }
+
+    @Override
+    public void onWakeUpFinish(XAppData xAppData, XAppError xAppError) {
+      super.onWakeUpFinish(xAppData, xAppError);
+      channel.invokeMethod("onWakeupEvenErrorAlsoCallBackNotification", xDataHasErrorMap(xAppData,xAppError));
       wakeupIntent = null;
       wakeupActivity = null;
     }
@@ -116,6 +126,10 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
       // 广告初始化
       initWithAd(call,result);
 
+    } else if (call.method.equals("reportShareByXinShareId")){
+      // 分享裂变事件上报
+      reportShareByXinShareId(call,result);
+
     } else if (call.method.equals("setLog")){
           // 设置Log 答应
       runInUIThread(new Runnable() {
@@ -137,8 +151,14 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
     String pointId = call.argument("pointId");
     Integer pointValue = call.argument("pointValue");
     Integer duration = call.argument("duration");
-    XInstall.reportPoint(pointId, pointValue == null ? 0 : pointValue, duration == null ? 0 : duration);
+    XInstall.reportEvent(pointId, pointValue == null ? 0 : pointValue, duration == null ? 0 : duration);
     result.success("reportPoint success");
+  }
+
+  private void reportShareByXinShareId(MethodCall call, Result result) {
+    String userId = call.argument("userId");
+    XInstall.reportShareByXinShareId(userId);
+    result.success("reportShareById success");
   }
 
   private void getInstallParams(final MethodCall call) {
@@ -287,7 +307,19 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
         result.put("isFirstFetch", data.isFirstFetch() + "");
       }
     }
-
     return result;
+  }
+
+  private static Map<String, Object> xDataHasErrorMap(XAppData data, XAppError xAppError) {
+    Map<String, String> wakeUpData = xData2Map(data, false);
+    Map<String, String> error = new HashMap<>();
+    if (xAppError != null) {
+      error.put("errorType",xAppError.getErrorCode());
+      error.put("errorMsg",xAppError.getErrorMsg());
+    }
+    Map<String, Object> result = new HashMap<>();
+    result.put("wakeUpData",wakeUpData);
+    result.put("error",error);
+    return  result;
   }
 }
