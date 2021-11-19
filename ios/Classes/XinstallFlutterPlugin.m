@@ -281,10 +281,24 @@ static NSString * const XinstallThirdVersion = @"1.5.2";
 
 #pragma mark - Xinstall API
 - (void)xinstall_getWakeUpParams:(XinstallData *)appData error:(XinstallError *)error {
+    
     if (appData != NULL) {
-        [self wakeUpParamsResponse:appData];
+        if (self.hasRegister) {
+            self.wakeupData = NULL;
+            [self wakeUpParamsResponse:appData];
+        } else {
+            self.wakeupData = appData;
+        }
     }
-    [self wakeUpDetailParamsResponse:appData withError:error];
+    if (self.hasDetailRegister) {
+        self.wakeupDetailData = NULL;
+        self.wakeupDetailError = NULL;
+        [self wakeUpDetailParamsResponse:appData withError:error];
+    } else {
+        self.wakeupDetailData = appData;
+        self.wakeupDetailError = error;
+    }
+     
 }
 
 + (BOOL)handleSchemeURL:(NSURL *)url {

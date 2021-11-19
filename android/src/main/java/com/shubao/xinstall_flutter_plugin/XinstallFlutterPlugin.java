@@ -35,11 +35,18 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
   private static MethodChannel channel;
 
   private static volatile boolean hasCallInit = false;
+  private static volatile boolean hasRegister = false;
+  private static volatile boolean hasDetailRegister = false;
 
-  private static Registrar _registrar = null;
+  private static Map<String, String> wakeUpData;
+  private static Map<String, Object> wakeUpDetailData;
+
+
   private static Intent wakeupIntent = null;
   private static Activity wakeupActivity = null;
 
+
+  private static Registrar _registrar = null;
   private static final Handler UIHandler = new Handler(Looper.getMainLooper());
 
   private  static void runInUIThread(Runnable runnable) {
@@ -71,7 +78,7 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
       @Override
       public boolean onNewIntent(Intent intent) {
         if (hasCallInit) {
-          XInstall.getWakeUpParam(_registrar.activity(),intent, wakeUpAdapter);
+          XInstall.getWakeUpParamEvenErrorAlsoCallBack(_registrar.activity(),intent,wakeUpAdapter);
         } else {
           wakeupIntent = intent;
           wakeupActivity = _registrar.activity();
@@ -85,7 +92,12 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
     @Override
     public void onWakeUp(XAppData xAppData) {
       super.onWakeUp(xAppData);
-      channel.invokeMethod("onWakeupNotification", xData2Map(xAppData,false));
+      if (hasRegister) {
+        channel.invokeMethod("onWakeupNotification", xData2Map(xAppData,false));
+      } else {
+        wakeUpData = xData2Map(xAppData,false);
+      }
+
       wakeupIntent = null;
       wakeupActivity = null;
     }
@@ -93,14 +105,18 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
     @Override
     public void onWakeUpFinish(XAppData xAppData, XAppError xAppError) {
       super.onWakeUpFinish(xAppData, xAppError);
-      channel.invokeMethod("onWakeupEvenErrorAlsoCallBackNotification", xDataHasErrorMap(xAppData,xAppError));
+      if (hasDetailRegister) {
+        channel.invokeMethod("onWakeupDetailNotification", xDataHasErrorMap(xAppData,xAppError));
+      } else {
+        wakeUpDetailData = xDataHasErrorMap(xAppData,xAppError);
+      }
       wakeupIntent = null;
       wakeupActivity = null;
     }
   };
 
   @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
+  public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
     System.out.println("onMethodCall");
 
     if (call.method.equals("getInstallParam")) {
@@ -129,15 +145,47 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
     } else if (call.method.equals("reportShareByXinShareId")){
       // 分享裂变事件上报
       reportShareByXinShareId(call,result);
-
     } else if (call.method.equals("setLog")){
           // 设置Log 答应
       runInUIThread(new Runnable() {
         @Override
         public void run() {
           XInstall.setDebug(true);
+          result.success("setDebug success");
         }
       });
+    } else if (call.method.equals("registerWakeUpHandler")) {
+      hasRegister = true;
+      Map<String, String> wakeupData = null;
+      synchronized (this) {
+        if (this.wakeUpData != null) {
+          Map<String, String> wakeupDataMap = new HashMap<>();
+          wakeupDataMap.putAll(this.wakeUpData);
+          wakeupData = wakeupDataMap;
+        }
+      }
+
+      if (wakeupData != null) {
+        channel.invokeMethod("onWakeupNotification", wakeupData);
+        this.wakeUpData = null;
+      }
+
+    } else if (call.method.equals("registerWakeUpDetailHandler")){
+      hasDetailRegister = true;
+      Map<String,Object> wakeupDetailData = null;
+      synchronized (this) {
+        if (this.wakeUpDetailData != null) {
+          Map <String, Object> wakeupDetailDataMap = new HashMap<>();
+          wakeupDetailDataMap.putAll(this.wakeUpDetailData);
+          wakeupDetailData = wakeupDetailDataMap;
+        }
+      }
+
+      if (wakeupDetailData != null) {
+         channel.invokeMethod("onWakeupDetailNotification", wakeupDetailData);
+         this.wakeUpDetailData = null;
+      }
+
     } else {
       result.notImplemented();
     }
@@ -156,7 +204,7 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
   }
 
   private void reportShareByXinShareId(MethodCall call, Result result) {
-    String userId = call.argument("userId");
+    String userId = call.argument("shareId");
     XInstall.reportShareByXinShareId(userId);
     result.success("reportShareById success");
   }
@@ -195,7 +243,6 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
   }
 
   private void initWithAdInMain(final MethodCall call, final Result result) {
-    hasCallInit = true;
     XINConfiguration configuration = XINConfiguration.Builder();
     boolean adEnable = true;
     if (call.hasArgument("adEnable")) {
@@ -261,21 +308,22 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
   }
 
   private void initInMain(Context context) {
-    hasCallInit = true;
+
     XInstall.init(context);
     xinitialized();
 
   }
 
   private void xinitialized() {
+    this.hasCallInit = true;
     if (wakeupIntent != null && wakeupActivity != null) {
-      XInstall.getWakeUpParam(wakeupActivity,wakeupIntent, wakeUpAdapter);
+      XInstall.getWakeUpParamEvenErrorAlsoCallBack(wakeupActivity,wakeupIntent, wakeUpAdapter);
       wakeupActivity = null;
       wakeupIntent = null;
     } else {
       Activity activity = _registrar.activity();
       if (activity != null) {
-        XInstall.getWakeUpParam(_registrar.activity(),activity.getIntent(), wakeUpAdapter);
+        XInstall.getWakeUpParamEvenErrorAlsoCallBack(_registrar.activity(),activity.getIntent(), wakeUpAdapter);
       }
       wakeupActivity = null;
       wakeupIntent = null;
