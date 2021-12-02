@@ -45,8 +45,8 @@ class _MyAppState extends State<MyApp> {
 
     // _xinstallFlutterPlugin.initWithAd({"idfa":"测试外传idfa"},xwakeupParamHandler,xPermissionBackHandler);
     // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,xPermissionBackHandler);
-    // _xinstallFlutterPlugin.initWithAd({"idfa":"测试外传idfa"},xwakeupParamHandler,null);
-    _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xPermissionBackHandler);
+    //_xinstallFlutterPlugin.initWithAd({"idfa":"测试外传idfa"},xwakeupParamHandler,null);
+    _xinstallFlutterPlugin.initWithAd({"adEnable":true,"idfa":"测试外传idfa","asaEnable":true},xPermissionBackHandler);
 
     _wakeUpRegister();
     _wakeUpDetailRegister();
@@ -127,7 +127,7 @@ class _MyAppState extends State<MyApp> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("调试日志请在控制台查看"),
+            Text("调试日志请在控制台查看change"),
             Text("唤起参数-wakeUpData:$_wakeUpData"),
             Text("唤醒参数-wakeUpDetailData:$_wakeUpDetailData"),
             Text("安装参数-installData:$_installData"),

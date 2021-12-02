@@ -40,7 +40,7 @@ android {
         versionName flutterVersionName
 
         manifestPlaceholders = [
-                XINSTALL_APPKEY : "faj9nq4",
+                XINSTALL_APPKEY : "bz98lsf",
         ]
 
     }

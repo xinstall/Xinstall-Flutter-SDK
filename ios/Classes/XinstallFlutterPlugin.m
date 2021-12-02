@@ -1,6 +1,10 @@
 #import "XinstallFlutterPlugin.h"
 #import "XinstallSDK.h"
 
+#if __has_include(<AdServices/AAAttribution.h>)
+    #import <AdServices/AAAttribution.h>
+#endif
+
 typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
     XinstallSDKPluginMethodInit,
     XinstallSDKPluginMethodGetInstallParams,
@@ -26,9 +30,9 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 @end
 
 static NSString * const XinstallThirdPlatformFlag = @"XINSTALL_THIRDPLATFORM_FLUTTER_THIRDPLATFORM_XINSTALL";
-static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_1.5.2_THIRDSDKVERSION_XINSTALL";
+static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_1.5.5_THIRDSDKVERSION_XINSTALL";
 static NSInteger const XinstallThirdPlatform = 8;
-static NSString * const XinstallThirdVersion = @"1.5.2";
+static NSString * const XinstallThirdVersion = @"1.5.5";
 
 
 @implementation XinstallFlutterPlugin
@@ -68,6 +72,21 @@ static NSString * const XinstallThirdVersion = @"1.5.2";
                     @"reportShareByXinShareId"     :      @(XinstallSDKPluginMethodReportShareByXinShareId)
                     };
 }
+
++ (NSString *)getASAToken {
+#if __has_include(<AdServices/AAAttribution.h>)
+    if (@available(iOS 14.3, *)) {
+        NSError *error;
+        NSString *asaToken = [AAAttribution attributionTokenWithError:&error];
+        return asaToken;
+    } else {
+        return @"";
+    }
+#else
+    return @"";
+#endif
+}
+
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     NSNumber *methodType = self.methodDict[call.method];
@@ -135,16 +154,21 @@ static NSString * const XinstallThirdVersion = @"1.5.2";
                 
                 NSDictionary *args = call.arguments;
                 NSString *idfa = (NSString *)args[@"idfa"];
+                BOOL asaEnable = [args[@"asaEnable"] boolValue];
                 if (!(idfa.length > 0)) {
                     NSLog(@"该文件并不具备内部获取idfa的能力，请到example 中的iOS_idfa中的XinstallFlutterPlugin.m替换本文件");
-                        [XinstallSDK initWithDelegate:self];
-                        [self.flutterMethodChannel invokeMethod:@"onPermissionBackNotification" arguments:@{}];
-
-                } else {
-                    [XinstallSDK initWithDelegate:self idfa:idfa];
-                    [self.flutterMethodChannel invokeMethod:@"onPermissionBackNotification" arguments:@{}];
-        
                 }
+                
+                NSString *asaToken = @"";
+                if (asaEnable) {
+                    asaToken = [XinstallFlutterPlugin getASAToken];
+                }
+                
+                    
+                [XinstallSDK initWithDelegate:self idfa:idfa asaToken:asaToken];
+                [self.flutterMethodChannel invokeMethod:@"onPermissionBackNotification" arguments:@{}];
+        
+        
                 
                 NSLog(@"InitWithAd");
                 break;
