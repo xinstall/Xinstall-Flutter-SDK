@@ -453,7 +453,7 @@ Android系统，iOS系统
          <tr>
              <th>asaEnable</th>
              <th>boolean</th>
-             <th>是否开启 ASA 渠道，不需要时可以不传。详见《7、苹果搜索广告（ASA）渠道功能》</th>
+             <th>是否开启 ASA 渠道，不需要时可以不传。详见《6、苹果搜索广告（ASA）渠道功能》</th>
          </tr>
      </table>
 
@@ -569,7 +569,54 @@ Android系统，iOS系统
 
 ![AppStore_IDFA_6](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/IDFA_6.png)
 
+### 6、 苹果搜索广告（ASA）渠道功能
 
+>  如果您在 Xinstall 管理后台对应 App 中，**不使用「ASA渠道」，则无需进行本小节中额外的集成工作**，也能正常使用 Xinstall 提供的其他功能。
+
+#### 6.1 更换初始化方法
+
+**使用新的 initWithAd 方法，替代原先的 init 方法来进行模块的初始化**
+
+## **initWithAd**
+
+**入参说明**：需要主动传入参数，JSON对象
+
+入参内部字段：
+
+* iOS 端：
+
+  <table>
+         <tr>
+             <th>参数名</th>
+             <th>参数类型</th>
+             <th>描述 </th>
+         </tr>
+         <tr>
+             <th>idfa</th>
+             <th>string</th>
+             <th>iOS 系统中的广告标识符（不需要时可以不传）</th>
+         </tr>
+         <tr>
+             <th>asa</th>
+             <th>boolean</th>
+             <th>是否开启 ASA 渠道，true 时为开启，false 或者不传时均为不开启</th>
+         </tr>
+     </table>
+
+**回调说明**：无需传入回调函数
+
+**调用示例**
+
+```dart
+// iOS 如果用到asade话需要传入asaEnable
+_xinstallFlutterPlugin.initWithAd({"asaEnable":true},xwakeupParamHandler,null);
+```
+
+**可用性**
+
+iOS系统
+
+可提供的 1.5.5 及更高版本
 
 ## 三、导出apk/ipa包并上传
 
