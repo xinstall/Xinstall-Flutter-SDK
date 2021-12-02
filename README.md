@@ -145,16 +145,16 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 
 ```dart
  _xinstallFlutterPlugin = XinstallFlutterPlugin.getInstance();
-// xwakeupParamHandler 为 一键拉起回调，如果不需要回调可以传空
- _xinstallFlutterPlugin.init(xwakeupParamHandler);
+ // 普通初始化
+ _xinstallFlutterPlugin.init();
+ // 广告初始化xPermissionBackHandler 为初始化后的回调，内部可添加自己的逻辑
+ _xinstallFlutterPlugin.initWithAd({"adEnable":true,"idfa":"测试外传idfa","asaEnable":true},xPermissionBackHandler);
 
-Future xwakeupParamHandler(Map<String, dynamic> data) async {
+ Future xPermissionBackHandler() async {
     setState(() {
-      var d = data["data"];
-      var timeSpan = data["timeSpan"];
-      var channelCode = data["channelCode"];
-      _wakeUpData = data.toString();
-      print(_wakeUpData);
+      // 此处初始化结束后我执行了安装参数获取
+      print("执行了获取安装参数的方法");
+      _getXInstallParam();
     });
   }
 ```
@@ -171,6 +171,8 @@ Future xwakeupParamHandler(Map<String, dynamic> data) async {
 ### 2.携带参数安装/唤起
 
 在 APP 需要安装参数时（由 web 网页中传递过来的，如邀请码、游戏房间号等动态参数），调用此接口，在回调中获取参数，参数在快速下载第一次打开应用时候，或被一键拉起时候会传递过来。
+
+#### 2.1 注册唤醒回调的两种方法
 
 
 ```dart
@@ -191,7 +193,29 @@ Future xwakeupParamHandler(Map<String, dynamic> data) async {
   Future<void> initXInstallPlugin() async {
     if (!mounted) return;
     _xinstallFlutterPlugin = XinstallFlutterPlugin.getInstance();
-    _xinstallFlutterPlugin.init(xwakeupParamHandler);
+    // 传统初始化
+    // _xinstallFlutterPlugin.init();
+    // _getXInstallParam();
+    // 广告初始化
+    _xinstallFlutterPlugin.initWithAd({"adEnable":true,"idfa":"测试外传idfa","asaEnable":true},xPermissionBackHandler);
+    
+    // 下面是diwakeup回调方法
+    // 第一种只有成功的时候才会回调，不会返回相关错误情况
+    _wakeUpRegister();
+    // 第二种只要调用注册方法，就一定会回调，会返回相关错误情况
+    _wakeUpDetailRegister();
+  }
+
+  Future xPermissionBackHandler() async {
+    setState(() {
+      print("执行了获取安装参数的方法");
+      _getXInstallParam();
+    });
+  }
+
+  // 第一种 注册wakeup函数 ---------------------
+  void _wakeUpRegister() {
+     _xinstallFlutterPlugin.registerWakeUpHandler(xwakeupParamHandler);
   }
 
   Future xwakeupParamHandler(Map<String, dynamic> data) async {
@@ -203,7 +227,92 @@ Future xwakeupParamHandler(Map<String, dynamic> data) async {
       print(_wakeUpData);
     });
   }
+// --------------------------------------------
+
+// 第二种 注册wakeup函数
+  void _wakeUpDetailRegister() {
+      _xinstallFlutterPlugin.registerWakeUpDetailHandler(xwakeupDetailParamHandler);
+  }
+
+	Future xwakeupDetailParamHandler(Map<String, dynamic> data) async {
+    setState(() {
+      _wakeUpDetailData = data.toString();
+      print(_wakeUpDetailData);
+    });
+  }
+
+//------------------------------------------------
 ```
+
+##### 2.1.1 两种唤醒回调方法的数据格式
+
+```json
+// 第一种回调的json 数据
+{
+    "channelCode":"渠道编号",  // 字符串类型。渠道编号，没有渠道编号时为 ""
+    "data":{									// 对象类型。唤起时携带的参数。
+        "co":{								// co 为唤醒页面中通过 Xinstall Web SDK 中的点击按钮传递的数据，key & value 均可自定义，key & value 数量不限制
+            "自定义key1":"自定义value1", 
+            "自定义key2":"自定义value2"
+        },
+        "uo":{   							// uo 为唤醒页面 URL 中 ? 后面携带的标准 GET 参数，key & value 均可自定义，key & value 数量不限制
+            "自定义key1":"自定义value1",
+            "自定义key2":"自定义value2"
+        }
+    }
+}
+
+// 第二种回调的json 数据
+{
+  "wakeUpData":
+  {
+    "channelCode":"渠道编号",  // 字符串类型。渠道编号，没有渠道编号时为 ""
+    "data":{									// 对象类型。唤起时携带的参数。
+        "co":{								// co 为唤醒页面中通过 Xinstall Web SDK 中的点击按钮传递的数据，key & value 均可自定义，key & value 数量不限制
+            "自定义key1":"自定义value1", 
+            "自定义key2":"自定义value2"
+        },
+        "uo":{   							// uo 为唤醒页面 URL 中 ? 后面携带的标准 GET 参数，key & value 均可自定义，key & value 数量不限制
+            "自定义key1":"自定义value1",
+            "自定义key2":"自定义value2"
+        }
+    }
+  },
+  "error": 
+  {
+    "errorType" : 7,					// 数字类型。代表错误的类型，具体数字对应类型可在下方查看
+    "errorMsg" : "xxxxx"			// 字符串类型。错误的描述
+  }
+}
+
+
+/** errorType 对照表：
+ * iOS
+ * -1 : SDK 配置错误；
+ * 0 : 未知错误；
+ * 1 : 网络错误；
+ * 2 : 没有获取到数据；
+ * 3 : 该 App 已被 Xinstall 后台封禁；
+ * 4 : 该操作不被允许（一般代表调用的方法没有开通权限）；
+ * 5 : 入参不正确；
+ * 6 : SDK 初始化未成功完成；
+ * 7 : 没有通过 Xinstall Web SDK 集成的页面拉起；
+ *
+ * Android
+ * 1006 : 未执行init 方法;
+ * 1007 : 未传入Activity，Activity 未比传参数
+ * 1008 : 用户未知操作 不处理
+ * 1009 : 不是唤醒执行的调用方法
+ * 1010 : 前后两次调起时间小于1s，请求过于频繁
+ * 1011 : 获取调起参数失败
+ * 1012 : 重复获取调起参数
+ * 1013 : 本次调起并非为XInstall的调起
+ * 1004 : 无权限
+ * 1014 : SCHEME URL 为空
+ */
+```
+
+#### 2.2 安装参数获取
 
 
 ```dart
@@ -248,29 +357,60 @@ Future xwakeupParamHandler(Map<String, dynamic> data) async {
   }
 ```
 
-### 4. 广告平台渠道功能
+### 4. 场景定制统计
+
+场景业务介绍，可到[分享数据统计](https://doc.xinstall.com/environment/分享数据统计.html)页面查看
+
+> 分享统计主要用来统计分享业务相关的数据，例如分享次数、分享查看人数、分享新增用户等。在用户分享操作触发后（注：此处为分享事件触发，非分享完成或成功），可调用如下方法上报一次分享数据：
+
+``` dart
+// 分享裂变上报
+void _reportShareByXinShareId() {
+    _xinstallFlutterPlugin.reportShareByXinShareId("填写分享人或UID");
+}
+```
+
+**补充说明**
+
+分享人或UID 可由您自行定义，只需要用以区分用户即可。
+
+您可在 Xinstall 管理后台 对应 App 中查看详细分享数据报表，表中的「分享人/UID」即为调用方法时携带的参数，其余字段含义可将鼠标移到字段右边的小问号上进行查看：
+
+![分享报表](https://doc.xinstall.com/integrationGuide/share.jpg)
+
+**可用性**
+
+Android系统，iOS系统
+
+可提供的 1.5.5 及更高版本
+
+
+
+
+
+### 5. 广告平台渠道功能
 
 > 如果您在 Xinstall 管理后台对应 App 中，**只使用「自建渠道」，而不使用「广告平台渠道」，则无需进行本小节中额外的集成工作**，也能正常使用 Xinstall 提供的其他功能。
 >
 > 注意：根据目前已有的各大主流广告平台的统计方式，目前 iOS 端和 Android 端均需要用户授权并获取一些设备关键值后才能正常进行 [ 广告平台渠道 ] 的统计，如 IDFA / OAID / GAID 等，对该行为敏感的 App 请慎重使用该功能。
 
-##### 4.1 配置工作
+##### 5.1 配置工作
 
 **iOS 端：**
 
-4.1.1 在 Xcode 中打开 iOS 端的工程，在 `Info.plist` 文件中配置一个权限作用声明（如果不配置将导致 App 启动后马上闪退）：
+5.1.1 在 Xcode 中打开 iOS 端的工程，在 `Info.plist` 文件中配置一个权限作用声明（如果不配置将导致 App 启动后马上闪退）：
 
 ```xml
 <key>NSUserTrackingUsageDescription</key>
 <string>这里是针对获取 IDFA 的作用描述，请根据实际情况填写</string>
 ```
 
-4.1.2 在 Xcode 中，找到 App 对应的「Target」，再点击「General」，然后在「Frameworks, Libraries, and Embedded Content」中，添加如下两个框架：
+5.1.2 在 Xcode 中，找到 App 对应的「Target」，再点击「General」，然后在「Frameworks, Libraries, and Embedded Content」中，添加如下两个框架：
 
 * AppTrackingTransparency.framework
 * AdSupport.framework
 
-4.1.3 `ios/Classes/XinstallFlutterPlugin.m` 替换成`example/iOS_idfa/XinstallFlutterPlugin.m`
+5.1.3 `ios/Classes/XinstallFlutterPlugin.m` 替换成`example/iOS_idfa/XinstallFlutterPlugin.m`
 
 
 
@@ -286,7 +426,7 @@ Future xwakeupParamHandler(Map<String, dynamic> data) async {
 
 2. 如果使用OAID，因为内部使用反射获取oaid 参数，所以都需要外部用户接入OAID SDK 。具体接入参考[《Android集成指南》](https://doc.xinstall.com/AD/AndroidGuide.html)
 
-##### 4.2、更换初始化方法
+##### 5.2、更换初始化方法
 
 **使用新的 initWithAd 方法，替代原先的 init 方法来进行模块的初始化**
 
@@ -309,6 +449,11 @@ Future xwakeupParamHandler(Map<String, dynamic> data) async {
              <th>idfa</th>
              <th>字符串</th>
              <th>iOS 系统中的广告标识符</th>
+         </tr>
+         <tr>
+             <th>asaEnable</th>
+             <th>boolean</th>
+             <th>是否开启 ASA 渠道，不需要时可以不传。详见《7、苹果搜索广告（ASA）渠道功能》</th>
          </tr>
      </table>
 
@@ -357,16 +502,16 @@ Future<void> initXInstallPlugin() async {
     _xinstallFlutterPlugin = XinstallFlutterPlugin.getInstance();
    // idfa, gaid, oaid 为选填参数 如果外部不传如idfa，再替换XinstallFlutterPlugin.m，文件后，会内部自动获取
    // oaid和gaid 为选传，不传则代表使用SDK自动去获取（SDK内不包括OAID SDK，需要自己接入）
-    _xinstallFlutterPlugin.initWithAd({"adEnable":true,"idfa":"外部传入idfa","gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,null);
+    _xinstallFlutterPlugin.initWithAd({"adEnable":true,"idfa":"外部传入idfa","asaEnable":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,null);
    // 如果希望在完成初始化，立即执行之后的步骤可以通过 下列代码实现-------------------------
-   // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"idfa":"外部传入idfa","gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,xPermissionBackHandler);
+   // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"idfa":"外部传入idfa","asaEnable":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,xPermissionBackHandler);
    // -----------------------------------------------------------------------------
   
    // 如果 android 想外部获取IMEI权限
    // 使用 permission_handler
    //  if (await Permission.phone.request().isGranted) {
    // 获取到了权限
-   //  _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":false,"idfa":"外部传入idfa","gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,null);
+   //  _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":false,"idfa":"外部传入idfa","asaEnable":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,null);
    //}
 }
 
@@ -384,13 +529,11 @@ Android系统，iOS系统
 
 可提供的 1.5.0 及更高版本
 
-
-
-#### 4.3、上架须知
+#### 5.3、上架须知
 
 **在使用了广告平台渠道后，若您的 App 需要上架，请认真阅读本段内容。**
 
-##### 4.3.1 iOS 端：上架 App Store
+##### 5.3.1 iOS 端：上架 App Store
 
 1. 如果您的 App 没有接入苹果广告（即在 App 中显示苹果投放的广告），那么在提交审核时，在广告标识符中，请按照下图勾选：
 
