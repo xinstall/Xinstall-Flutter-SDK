@@ -357,6 +357,29 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
   }
 ```
 
+#### 事件明细统计 
+
+> 除了旧有事件业务，我们还开发了事件明细统计，用来统计各个事件具体发生情况。
+>
+> 1.5.7 及以后版本可用
+
+在使用之前要现在后台管理系统中打开该事件明细统计功能，具体如下：
+
+![](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/event.png)
+
+在开启权限之后，我们直接使用Xinstall SDK 的`reportEventWhenOpenDetailInfo`方法上传单个事件的第二个详细值
+
+```js
+//事件详情统计
+void _reportEventWhenOpenDetailInfo() {
+   _xinstallFlutterPlugin.reportEventWhenOpenDetailInfo("eventId", 122, "张三");
+}
+```
+
+最终在事件列表中可以点击查看查阅具体详情的内容
+
+![](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/event_detail_list.png)
+
 ### 4. 场景定制统计
 
 场景业务介绍，可到[分享数据统计](https://doc.xinstall.com/environment/分享数据统计.html)页面查看
