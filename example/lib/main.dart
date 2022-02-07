@@ -105,7 +105,7 @@ class _MyAppState extends State<MyApp> {
 
   //事件详情统计
   void _reportEventWhenOpenDetailInfo() {
-    _xinstallFlutterPlugin.reportEventWhenOpenDetailInfo("122", 10, "华文杰Flutter_Android");
+    _xinstallFlutterPlugin.reportEventWhenOpenDetailInfo("122", 122, "华文杰Flutter_Android");
   }
 
   //注册wakeup 函数

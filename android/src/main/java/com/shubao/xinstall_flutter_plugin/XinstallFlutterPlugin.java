@@ -209,7 +209,7 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
     String eventId = call.argument("eventId");
     Integer eventValue = call.argument("eventValue");
     String eventSubValue = call.argument("eventSubValue");
-    XIntall.reportEventWhenOpenDetailInfo(eventId, eventValue == null ? 0 : eventValue, eventSubValue);
+    XInstall.reportEventWhenOpenDetailInfo(eventId,eventValue == null ? 0 : eventValue, eventSubValue);
     result.success("reportPoint success");
   }
 

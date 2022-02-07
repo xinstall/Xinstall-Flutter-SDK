@@ -9,7 +9,7 @@ if (localPropertiesFile.exists()) {
 
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
-//    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -64,10 +64,10 @@ android {
     }
 }
 
-dependencies {
-    compileOnly 'androidx.annotation:annotation:1.1.0'
-    implementation "com.xinstall:xinstall_flutter_plugin:1.5.7"
-}
+//dependencies {
+//    compileOnly 'androidx.annotation:annotation:1.1.0'
+//    implementation "com.xinstall:xinstall_flutter_plugin:1.5.7"
+//}
 
 flutter {
     source '../..'
