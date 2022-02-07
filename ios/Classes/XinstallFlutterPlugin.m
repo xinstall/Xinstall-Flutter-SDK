@@ -13,7 +13,8 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
     XinstallSDKPluginMethodInitWithAd,
     XinstallSDKPluginMethodRegisterWakeUpHandler,
     XinstallSDKPluginMethodRegisterWakeUpDetailHandler,
-    XinstallSDKPluginMethodReportShareByXinShareId
+    XinstallSDKPluginMethodReportShareByXinShareId,
+    XinstallSDKPluginMethodReportEventSubValue
 };
 
 @interface XinstallFlutterPlugin () <XinstallDelegate>
@@ -30,9 +31,9 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 @end
 
 static NSString * const XinstallThirdPlatformFlag = @"XINSTALL_THIRDPLATFORM_FLUTTER_THIRDPLATFORM_XINSTALL";
-static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_1.5.5_THIRDSDKVERSION_XINSTALL";
+static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_1.5.7_THIRDSDKVERSION_XINSTALL";
 static NSInteger const XinstallThirdPlatform = 8;
-static NSString * const XinstallThirdVersion = @"1.5.5";
+static NSString * const XinstallThirdVersion = @"1.5.7";
 
 
 @implementation XinstallFlutterPlugin
@@ -67,6 +68,7 @@ static NSString * const XinstallThirdVersion = @"1.5.5";
                     @"getInstallParam"             :      @(XinstallSDKPluginMethodGetInstallParams),
                     @"registerWakeUpHandler"       :      @(XinstallSDKPluginMethodRegisterWakeUpHandler),
                     @"registerWakeUpDetailHandler" :      @(XinstallSDKPluginMethodRegisterWakeUpDetailHandler),
+                    @"reportEventWhenOpenDetailInfo":@(XinstallSDKPluginMethodReportEventSubValue),
                     @"reportRegister"              :      @(XinstallSDKPluginMethodReportRegister),
                     @"reportPoint"                 :      @(XinstallSDKPluginMethodReportEventPoint),
                     @"reportShareByXinShareId"     :      @(XinstallSDKPluginMethodReportShareByXinShareId)
@@ -98,6 +100,17 @@ static NSString * const XinstallThirdVersion = @"1.5.5";
                 [self.flutterMethodChannel invokeMethod:@"onPermissionBackNotification" arguments:@{}];
     
                 NSLog(@"Init");
+                break;
+            }
+            case XinstallSDKPluginMethodReportEventSubValue:
+            {
+                NSDictionary *args = call.arguments;
+                NSString *eventId = (NSString *)args[@"eventId"];
+                NSNumber *eventValueNum = (NSNumber *)args[@"eventValue"];
+                NSString *eventSubValue = (NSString *)args[@"eventSubValue"];
+                long eventValue = [eventValueNum longValue];
+                [[XinstallSDK defaultManager] reportEventWhenOpenDetailInfoWithEventPoint:eventId eventValue:eventValue  subValue:eventSubValue];
+                NSLog(@"reportEventWhenOpenDetailInfo--%@",args);
                 break;
             }
             case XinstallSDKPluginMethodRegisterWakeUpDetailHandler:

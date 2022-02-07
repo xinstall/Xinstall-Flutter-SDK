@@ -12,7 +12,7 @@
 dependencies:
   ...
   # 依赖XInstall
-  xinstall_flutter_plugin: ^1.5.5
+  xinstall_flutter_plugin: ^1.5.7
 ```
 终端进入项目目录并输入 flutter pub get 安装
 
@@ -163,7 +163,7 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
 
 ## 三、功能集成
 
-###1.快速下载/一键拉起
+### 1.快速下载/一键拉起
 
 如果只需要快速下载功能和一键拉起，无需其它功能（携带参数安装、渠道统计），完成初始化配置即可。其他影响因素如下图
 ![](https://xinstall-static-pro.oss-cn-hangzhou.aliyuncs.com/APICloud%E7%B4%A0%E6%9D%90/v1.1.0/xinstall_yjlqksaztj.png)

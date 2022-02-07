@@ -132,7 +132,9 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
     } else if (call.method.equals("reportPoint")) {
       // 埋点上报
       reportPoint(call, result);
-
+    } else if (call.method.equals("reportEventWhenOpenDetailInfo")) {
+      // 事件详情上报
+      reportEventWhenOpenDetailInfo(call, result);
     } else if (call.method.equals("init")) {
       // 初始化
       init();
@@ -200,6 +202,14 @@ public class XinstallFlutterPlugin implements MethodCallHandler {
     Integer pointValue = call.argument("pointValue");
     Integer duration = call.argument("duration");
     XInstall.reportEvent(pointId, pointValue == null ? 0 : pointValue, duration == null ? 0 : duration);
+    result.success("reportPoint success");
+  }
+
+  private void reportEventWhenOpenDetailInfo(MethodCall call, Result result) {
+    String eventId = call.argument("eventId");
+    Integer eventValue = call.argument("eventValue");
+    String eventSubValue = call.argument("eventSubValue");
+    XIntall.reportEventWhenOpenDetailInfo(eventId, eventValue == null ? 0 : eventValue, eventSubValue);
     result.success("reportPoint success");
   }
 

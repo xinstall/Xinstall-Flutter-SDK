@@ -99,6 +99,14 @@ class XinstallFlutterPlugin {
     _channel.invokeMethod('reportPoint', args);
   }
 
+  void reportEventWhenOpenDetailInfo(String eventId, int eventValue, String eventSubValue) {
+    var args = new Map();
+    args["eventId"] = eventId;
+    args["eventValue"] = eventValue;
+    args["eventSubValue"] = eventSubValue;
+    _channel.invokeMethod('reportEventWhenOpenDetailInfo', args);
+  }
+
   void reportShareByXinShareId(String shareId) {
     var args = new Map();
     args["shareId"] = shareId;

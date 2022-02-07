@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:xinstall_flutter_plugin/xinstall_flutter_plugin.dart';
 
+
 void main() {
   runApp(MyApp());
 }
@@ -102,6 +103,11 @@ class _MyAppState extends State<MyApp> {
     _xinstallFlutterPlugin.reportPoint("eventId", 1);
   }
 
+  //事件详情统计
+  void _reportEventWhenOpenDetailInfo() {
+    _xinstallFlutterPlugin.reportEventWhenOpenDetailInfo("122", 10, "华文杰Flutter_Android");
+  }
+
   //注册wakeup 函数
   void _wakeUpRegister() {
     _xinstallFlutterPlugin.registerWakeUpHandler(xwakeupParamHandler);
@@ -145,6 +151,13 @@ class _MyAppState extends State<MyApp> {
             RaisedButton(
               child: Text("自定义事件上报-reportPoint"),
               onPressed: _reportPoint,
+            ),
+            Row(
+              children: [],
+            ),
+            RaisedButton(
+              child: Text("事件详情上报-reportPoint"),
+              onPressed: _reportEventWhenOpenDetailInfo,
             ),
             Row(
               children: [],
