@@ -137,32 +137,32 @@ class _MyAppState extends State<MyApp> {
             Text("唤起参数-wakeUpData:$_wakeUpData"),
             Text("唤醒参数-wakeUpDetailData:$_wakeUpDetailData"),
             Text("安装参数-installData:$_installData"),
-            RaisedButton(
+            MaterialButton(
               child: Text("获取安装参数-getInstall"),
               onPressed: _getXInstallParam,
             ),
-            RaisedButton(
+            MaterialButton(
               child: Text("注册事件上报-reportRegister"),
               onPressed: _reportRegister,
             ),
             Row(
               children: [],
             ),
-            RaisedButton(
+            MaterialButton(
               child: Text("自定义事件上报-reportPoint"),
               onPressed: _reportPoint,
             ),
             Row(
               children: [],
             ),
-            RaisedButton(
+            MaterialButton(
               child: Text("事件详情上报-reportPoint"),
               onPressed: _reportEventWhenOpenDetailInfo,
             ),
             Row(
               children: [],
             ),
-            RaisedButton(
+            MaterialButton(
               child: Text("分享裂变上报-reportShareByXinShareId"),
               onPressed: _reportShareByXinShareId,
             )
