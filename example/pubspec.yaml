@@ -6,28 +6,36 @@ description: Demonstrates how to use the xinstall_flutter_plugin plugin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+#  permission_handler:
   flutter:
     sdk: flutter
-
-# 本地依赖
+#   依赖XInstall
+#  xinstall_flutter_plugin: ^1.6.0
+## 本地依赖
   xinstall_flutter_plugin:
     path: ../
+
   
 # pub依赖
 #  xinstall_flutter_plugin: ^0.0.2
 
-  cupertino_icons: ^0.1.2
+  cupertino_icons: ^1.0.0
 
 dev_dependencies:
+#  permission_handler:
   flutter_test:
     sdk: flutter
 
-  # 本地依赖
+#  # 本地依赖
   xinstall_flutter_plugin:
     path: ../
+  # 依赖XInstall
+#  xinstall_flutter_plugin: ^1.6.0
+
+  cupertino_icons: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

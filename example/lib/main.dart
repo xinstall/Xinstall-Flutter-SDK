@@ -17,15 +17,15 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // 唤醒参数
-  String _wakeUpData;
+  String? _wakeUpData;
 
   // 唤醒参数
-  String _wakeUpDetailData;
+  String? _wakeUpDetailData;
 
   //  安装参数
-  String _installData;
+  String? _installData;
 
-  XinstallFlutterPlugin _xinstallFlutterPlugin;
+  late XinstallFlutterPlugin _xinstallFlutterPlugin;
 
   @override
   void initState() {
@@ -38,8 +38,19 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     _xinstallFlutterPlugin = XinstallFlutterPlugin.getInstance();
-    // _xinstallFlutterPlugin.init(xwakeupParamHandler);
-    // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true},xwakeupParamHandler,xPermissionBackHandler);
+    // _xinstallFlutterPlugin.init();
+    _xinstallFlutterPlugin.initWithConfigure({"androidId":"1234","serial":"1234","canClip":false});
+    // _xinstallFlutterPlugin.initWithConfigure({"serial":"1234","canClip":false});
+
+    // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"gaid":"测试gaid","isPermission":true,"androidId":"1234","serial":"1234","canClip":false},xPermissionBackHandler);
+
+    // if (await Permission.phone.request().isGranted) {
+    //   _xinstallFlutterPlugin.resultWithPermission({"isSuccess":true});
+    // } else {
+    //   _xinstallFlutterPlugin.resultWithPermission({"isSuccess":false});
+    // }
+
+
     // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid"},xwakeupParamHandler,xPermissionBackHandler);
     // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,xPermissionBackHandler);
     // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,null);
@@ -47,14 +58,15 @@ class _MyAppState extends State<MyApp> {
     // _xinstallFlutterPlugin.initWithAd({"idfa":"测试外传idfa"},xwakeupParamHandler,xPermissionBackHandler);
     // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"isPermission":true,"gaid":"测试gaid","oaid":"测试oaid"},xwakeupParamHandler,xPermissionBackHandler);
     //_xinstallFlutterPlugin.initWithAd({"idfa":"测试外传idfa"},xwakeupParamHandler,null);
-    _xinstallFlutterPlugin.initWithAd({"adEnable":true,"idfa":"测试外传idfa","asaEnable":true},xPermissionBackHandler);
+    // _xinstallFlutterPlugin.initWithAd({"adEnable":true,"idfa":"测试外传idfa","asaEnable":true},xPermissionBackHandler);
 
+    _getXInstallParam();
     _wakeUpRegister();
-    _wakeUpDetailRegister();
+    // _wakeUpDetailRegister();
   }
 
   Future xPermissionBackHandler() async {
-    setState(() {
+    setState((){
       print("执行了获取安装参数的方法");
       _getXInstallParam();
     });

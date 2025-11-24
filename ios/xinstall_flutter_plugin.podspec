@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'xinstall_flutter_plugin'
-  s.version          = '1.5.9'
+  s.version          = '1.7.4'
   s.summary          = 'Xinstall Flutter plugin.'
   s.description      = <<-DESC
   Xinstall Flutter plugin example.
@@ -19,6 +19,6 @@ Pod::Spec.new do |s|
 #  s.dependency 'XinstallSDK'
   s.vendored_libraries = 'Classes/**/libXinstallSDK.a'
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '12.0'
 
 end

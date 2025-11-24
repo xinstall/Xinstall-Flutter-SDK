@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - xinstall_flutter_plugin (1.5.7):
+  - xinstall_flutter_plugin (1.7.4):
     - Flutter
 
 DEPENDENCIES:
@@ -14,9 +14,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/xinstall_flutter_plugin/ios"
 
 SPEC CHECKSUMS:
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  xinstall_flutter_plugin: fddf8c7da42b9e2f2db59276ab1a8bd5821cce5d
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  xinstall_flutter_plugin: e1408f5f8d7e3c4a9df2fb0deaeb2040854f3f06
 
-PODFILE CHECKSUM: 663715e941f9adb426e33bf9376914006f9ea95b
+PODFILE CHECKSUM: 137b119ea6cc2876831c72447eeade0f96b08dc1
 
-COCOAPODS: 1.11.0.beta.1
+COCOAPODS: 1.15.2

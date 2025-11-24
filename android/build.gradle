@@ -36,7 +36,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 30
+    compileSdk 33
 
     defaultConfig {
         minSdkVersion 21
@@ -47,8 +47,7 @@ android {
 }
 
 dependencies {
-//    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    compileOnly 'androidx.annotation:annotation:1.1.0'
 
-    implementation "com.xinstall:xinstall_flutter_plugin:1.5.7"
+    compileOnly 'androidx.annotation:annotation:1.1.0'
+    implementation "com.xinstall:xinstall_flutter_plugin:1.7.4"
 }

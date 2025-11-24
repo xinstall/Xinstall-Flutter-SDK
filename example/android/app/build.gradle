@@ -26,7 +26,7 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 34
 
     lintOptions {
         disable 'InvalidPackage'
@@ -35,14 +35,14 @@ android {
     defaultConfig {
         applicationId "com.shubao.xinstallapp"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 
         manifestPlaceholders = [
-                XINSTALL_APPKEY : "txoqpmu",
+                XINSTALL_APPKEY : "vd0b6lk",
         ]
-
+        ndk {abiFilters 'armeabi','armeabi-v7a','arm64-v8a','x86','x86_64'}
     }
 
     signingConfigs {
@@ -57,17 +57,20 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.keyConfig
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ndk {abiFilters 'armeabi','armeabi-v7a','arm64-v8a','x86','x86_64'}
         }
         debug {
             signingConfig signingConfigs.keyConfig
+            ndk {abiFilters 'armeabi','armeabi-v7a','arm64-v8a','x86','x86_64'}
         }
     }
 }
 
-//dependencies {
-//    compileOnly 'androidx.annotation:annotation:1.1.0'
-//    implementation "com.xinstall:xinstall_flutter_plugin:1.5.7"
-//}
+dependencies {
+    compileOnly 'androidx.annotation:annotation:1.1.0'
+    implementation "com.xinstall:xinstall_flutter_plugin:1.7.4"
+}
 
 flutter {
     source '../..'

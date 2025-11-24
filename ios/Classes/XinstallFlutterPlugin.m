@@ -14,7 +14,9 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
     XinstallSDKPluginMethodRegisterWakeUpHandler,
     XinstallSDKPluginMethodRegisterWakeUpDetailHandler,
     XinstallSDKPluginMethodReportShareByXinShareId,
-    XinstallSDKPluginMethodReportEventSubValue
+    XinstallSDKPluginMethodReportEventSubValue,
+    XinstallSDKPluginMethodInitWithConfigure,
+    XinstallSDKPluginMethodResultWithPermission
 };
 
 @interface XinstallFlutterPlugin () <XinstallDelegate>
@@ -31,9 +33,9 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 @end
 
 static NSString * const XinstallThirdPlatformFlag = @"XINSTALL_THIRDPLATFORM_FLUTTER_THIRDPLATFORM_XINSTALL";
-static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_1.5.9_THIRDSDKVERSION_XINSTALL";
+static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_1.7.4_THIRDSDKVERSION_XINSTALL";
 static NSInteger const XinstallThirdPlatform = 8;
-static NSString * const XinstallThirdVersion = @"1.5.9";
+static NSString * const XinstallThirdVersion = @"1.7.4";
 
 
 @implementation XinstallFlutterPlugin
@@ -68,10 +70,12 @@ static NSString * const XinstallThirdVersion = @"1.5.9";
                     @"getInstallParam"             :      @(XinstallSDKPluginMethodGetInstallParams),
                     @"registerWakeUpHandler"       :      @(XinstallSDKPluginMethodRegisterWakeUpHandler),
                     @"registerWakeUpDetailHandler" :      @(XinstallSDKPluginMethodRegisterWakeUpDetailHandler),
-                    @"reportEventWhenOpenDetailInfo":@(XinstallSDKPluginMethodReportEventSubValue),
+                    @"reportEventWhenOpenDetailInfo":     @(XinstallSDKPluginMethodReportEventSubValue),
                     @"reportRegister"              :      @(XinstallSDKPluginMethodReportRegister),
                     @"reportPoint"                 :      @(XinstallSDKPluginMethodReportEventPoint),
-                    @"reportShareByXinShareId"     :      @(XinstallSDKPluginMethodReportShareByXinShareId)
+                    @"reportShareByXinShareId"     :      @(XinstallSDKPluginMethodReportShareByXinShareId),
+                    @"initWithConfigure"           :      @(XinstallSDKPluginMethodInitWithConfigure),
+                    @"resultWithPermission"        :      @(XinstallSDKPluginMethodResultWithPermission)
                     };
 }
 
@@ -94,6 +98,14 @@ static NSString * const XinstallThirdVersion = @"1.5.9";
     NSNumber *methodType = self.methodDict[call.method];
     if (methodType) {
         switch (methodType.intValue) {
+            case XinstallSDKPluginMethodInitWithConfigure:
+            {
+                [XinstallSDK initWithDelegate:self];
+                [self.flutterMethodChannel invokeMethod:@"onPermissionBackNotification" arguments:@{}];
+
+                NSLog(@"InitWhtiConfigure");
+                break;
+            }
             case XinstallSDKPluginMethodInit:
             {
                 [XinstallSDK initWithDelegate:self];
