@@ -12,7 +12,7 @@
 dependencies:
   ...
   # 依赖XInstall
-  xinstall_flutter_plugin: ^1.7.2
+  xinstall_flutter_plugin: ^1.7.5
 ```
 终端进入项目目录并输入 flutter pub get 安装
 
@@ -151,6 +151,8 @@ Xinstall 通过universal link（iOS≥9 ）,在app已安装的情况下，从各
  _xinstallFlutterPlugin.initWithConfigure({"canClip":true,"serial":"","androidId":""});
  // 广告初始化xPermissionBackHandler 为初始化后的回调，内部可添加自己的逻辑
  _xinstallFlutterPlugin.initWithAd({"adEnable":true,"idfa":"测试外传idfa","asaEnable":true},xPermissionBackHandler);
+ // 开启或关闭 SDK 调试日志
+ _xinstallFlutterPlugin.setLog(true);
 
  Future xPermissionBackHandler() async {
     setState(() {

@@ -16,7 +16,8 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
     XinstallSDKPluginMethodReportShareByXinShareId,
     XinstallSDKPluginMethodReportEventSubValue,
     XinstallSDKPluginMethodInitWithConfigure,
-    XinstallSDKPluginMethodResultWithPermission
+    XinstallSDKPluginMethodResultWithPermission,
+    XinstallSDKPluginMethodSetLog
 };
 
 @interface XinstallFlutterPlugin () <XinstallDelegate>
@@ -33,9 +34,9 @@ typedef NS_ENUM(NSUInteger, XinstallSDKPluginMethod) {
 @end
 
 static NSString * const XinstallThirdPlatformFlag = @"XINSTALL_THIRDPLATFORM_FLUTTER_THIRDPLATFORM_XINSTALL";
-static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_1.7.4_THIRDSDKVERSION_XINSTALL";
+static NSString * const XinstallThirdVersionFlag = @"XINSTALL_THIRDSDKVERSION_1.7.5_THIRDSDKVERSION_XINSTALL";
 static NSInteger const XinstallThirdPlatform = 8;
-static NSString * const XinstallThirdVersion = @"1.7.4";
+static NSString * const XinstallThirdVersion = @"1.7.5";
 
 
 @implementation XinstallFlutterPlugin
@@ -75,7 +76,8 @@ static NSString * const XinstallThirdVersion = @"1.7.4";
                     @"reportPoint"                 :      @(XinstallSDKPluginMethodReportEventPoint),
                     @"reportShareByXinShareId"     :      @(XinstallSDKPluginMethodReportShareByXinShareId),
                     @"initWithConfigure"           :      @(XinstallSDKPluginMethodInitWithConfigure),
-                    @"resultWithPermission"        :      @(XinstallSDKPluginMethodResultWithPermission)
+                    @"resultWithPermission"        :      @(XinstallSDKPluginMethodResultWithPermission),
+                    @"setLog"                      :      @(XinstallSDKPluginMethodSetLog)
                     };
 }
 
@@ -238,6 +240,16 @@ static NSString * const XinstallThirdVersion = @"1.7.4";
                 NSString *shareId = (NSString *)args[@"shareId"];
                 [[XinstallSDK defaultManager] reportShareByXinShareId:shareId];
                 NSLog(@"reportShareByXinShareId--%@",args);
+                break;
+            }
+            case XinstallSDKPluginMethodSetLog:
+            {
+                BOOL enable = YES;
+                if (call.arguments[@"enable"] != nil) {
+                    enable = [call.arguments[@"enable"] boolValue];
+                }
+                [XinstallSDK setShowLog:enable];
+                NSLog(@"setLog -- %d", enable);
                 break;
             }
             default:

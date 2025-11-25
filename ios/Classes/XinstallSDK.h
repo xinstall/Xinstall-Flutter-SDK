@@ -1,4 +1,4 @@
-//  1.7.4
+//  1.7.5
 //  XinstallSDK.h
 //  XinstallSDK
 //

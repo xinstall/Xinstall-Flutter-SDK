@@ -30,13 +30,32 @@ android {
         versionName = flutter.versionName
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+    signingConfigs {
+        create("keyConfig") {
+            keyAlias = "dou22v"
+            keyPassword = "123qgm"
+            storeFile = file("../app/xinstalldemo.jks")
+            storePassword = "123qgm"
         }
     }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("keyConfig")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("keyConfig")
+        }
+    }
+}
+
+dependencies {
+    compileOnly("androidx.annotation:annotation:1.1.0")
+    implementation("com.xinstall:xinstall_flutter_plugin:1.7.5")
 }
 
 flutter {

@@ -28,12 +28,12 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
  * FlutterPlugin
  */
-public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware , PluginRegistry.NewIntentListener {
+public class XinstallFlutterPlugin
+        implements FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.NewIntentListener {
     private static final String TAG = "XinstallFlutterSDK";
 
     private static volatile boolean hasCallInit = false;
@@ -42,7 +42,6 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
 
     private static Map<String, String> wakeUpData;
     private static Map<String, Object> wakeUpDetailData;
-
 
     private static Intent wakeupIntent = null;
     private static Activity wakeupActivity = null;
@@ -105,7 +104,6 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
-        System.out.println("onMethodCall");
         if (call.method.equals("getInstallParam")) {
             // 安装参数获取
             getInstallParams(call);
@@ -143,11 +141,14 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
             // 分享裂变事件上报
             reportShareByXinShareId(call, result);
         } else if (call.method.equals("setLog")) {
-            // 设置Log 答应
+            final boolean enableLog = call.hasArgument("enable")
+                    ? Boolean.TRUE.equals(call.argument("enable"))
+                    : true;
+            // 设置日志开关
             runInUIThread(new Runnable() {
                 @Override
                 public void run() {
-                    XInstall.setDebug(true);
+                    XInstall.setDebug(enableLog);
                     result.success("setDebug success");
                 }
             });
@@ -327,20 +328,21 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
             runInUIThread(new Runnable() {
                 @Override
                 public void run() {
-                    resultWithPermissionInMain(call,result);
+                    resultWithPermissionInMain(call, result);
                 }
             });
         } else {
             System.out.println("Context is null, can not resultWithPermission Xinstall");
         }
     }
+
     private void initWithConfigure(final MethodCall call, final Result result) {
         Context context = getActivity();
         if (context != null) {
             runInUIThread(new Runnable() {
                 @Override
                 public void run() {
-                    initWithConfigureInMain(call,result);
+                    initWithConfigureInMain(call, result);
                 }
             });
         } else {
@@ -353,14 +355,14 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
         if (call.hasArgument("isSuccess")) {
             isSuccess = true;
         }
-        String[] strs = new String[]{};
+        String[] strs = new String[] {};
 
         if (isSuccess) {
-            int[] ints = new int[]{0};
-            XInstall.onRequestPermissionsResult(1111,strs,ints);
+            int[] ints = new int[] { 0 };
+            XInstall.onRequestPermissionsResult(1111, strs, ints);
         } else {
-            int[] ints = new int[]{};
-            XInstall.onRequestPermissionsResult(1111,strs,ints);
+            int[] ints = new int[] {};
+            XInstall.onRequestPermissionsResult(1111, strs, ints);
         }
     }
 
@@ -392,7 +394,6 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
             canClip = call.argument("canClip");
         }
         configuration.canClip(canClip);
-
 
         XInstall.init(context, configuration);
         xinitialized();
@@ -432,7 +433,6 @@ public class XinstallFlutterPlugin implements FlutterPlugin, MethodCallHandler, 
             wakeupIntent = null;
         }
     }
-
 
     private static Map<String, String> xData2Map(XAppData data, boolean isInit) {
         Map<String, String> result = new HashMap<>();

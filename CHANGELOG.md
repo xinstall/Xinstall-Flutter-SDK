@@ -14,4 +14,6 @@
 * 适配 iOS18
 
 ## 1.7.5
-* 适配 Flutter 3.35.0版本，示例应用example优化
+* SDK 升级到1.7.5
+* 适配 Flutter 3.35.0新版本，示例应用example优化
+* 新增 setDebug 方法用于控制 SDK 调试日志

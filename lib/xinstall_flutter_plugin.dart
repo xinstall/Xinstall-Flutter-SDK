@@ -29,20 +29,25 @@ class XinstallFlutterPlugin {
   }
 
   void initWithConfigure(Map params) {
-    _channel.invokeMethod("initWithConfigure",params);
+    _channel.invokeMethod("initWithConfigure", params);
     _channel.setMethodCallHandler(_handleMethod);
   }
 
-  void initWithAd(Map params,EventNoParamsHanlder permissionBackHandler) {
+  void setDebug(bool enable) {
+    var args = <String, dynamic>{"enable": enable};
+    _channel.invokeMethod("setLog", args);
+  }
+
+  void initWithAd(Map params, EventNoParamsHanlder permissionBackHandler) {
     _permissionBackHandler = permissionBackHandler;
 
-    _channel.invokeMethod("initWithAd",params);
+    _channel.invokeMethod("initWithAd", params);
     _channel.setMethodCallHandler(_handleMethod);
   }
 
   void resultWithPermission(Map params) {
     // 成功调用
-    _channel.invokeMethod("resultWithPermission",params);
+    _channel.invokeMethod("resultWithPermission", params);
     _channel.setMethodCallHandler(_handleMethod);
   }
 
@@ -86,23 +91,24 @@ class XinstallFlutterPlugin {
 
   void registerWakeUpHandler(EventHandler wakeupHandler) {
     if (this._wakeupHandler != null) {
-       print("重复注册WakeUp，只有最近一次回调会有效");
+      print("重复注册WakeUp，只有最近一次回调会有效");
     }
     this._wakeupHandler = wakeupHandler;
     if (this._wakeUpCall != null) {
-       this._wakeupHandler!(this._wakeUpCall!.arguments.cast<String, dynamic>());
-       this._wakeUpCall = null;
+      this._wakeupHandler!(this._wakeUpCall!.arguments.cast<String, dynamic>());
+      this._wakeUpCall = null;
     }
     _channel.invokeMethod('registerWakeUpHandler');
   }
-  
+
   void registerWakeUpDetailHandler(EventHandler wakeupDetailHandler) {
-    if(this._wakeupDetailHanlder != null) {
+    if (this._wakeupDetailHanlder != null) {
       print("重复注册wakeUpDetail, 只有最近一次回调会有效");
     }
     this._wakeupDetailHanlder = wakeupDetailHandler;
     if (this._wakeUpCall != null) {
-      this._wakeupDetailHanlder!(this._wakeUpCall!.arguments.cast<String, dynamic>());
+      this._wakeupDetailHanlder!(
+          this._wakeUpCall!.arguments.cast<String, dynamic>());
       this._wakeUpCall = null;
     }
     _channel.invokeMethod("registerWakeUpDetailHandler");
@@ -120,7 +126,8 @@ class XinstallFlutterPlugin {
     _channel.invokeMethod('reportPoint', args);
   }
 
-  void reportEventWhenOpenDetailInfo(String eventId, int eventValue, String eventSubValue) {
+  void reportEventWhenOpenDetailInfo(
+      String eventId, int eventValue, String eventSubValue) {
     var args = new Map();
     args["eventId"] = eventId;
     args["eventValue"] = eventValue;
@@ -131,6 +138,6 @@ class XinstallFlutterPlugin {
   void reportShareByXinShareId(String shareId) {
     var args = new Map();
     args["shareId"] = shareId;
-    _channel.invokeMethod('reportShareByXinShareId',args);
+    _channel.invokeMethod('reportShareByXinShareId', args);
   }
 }

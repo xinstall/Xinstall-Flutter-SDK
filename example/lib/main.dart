@@ -60,6 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!mounted) return;
 
     _xinstallFlutterPlugin = XinstallFlutterPlugin.getInstance();
+    _xinstallFlutterPlugin.setDebug(true);
+
     // _xinstallFlutterPlugin.init();
     _xinstallFlutterPlugin.initWithConfigure(
         {"androidId": "1234", "serial": "1234", "canClip": false});
