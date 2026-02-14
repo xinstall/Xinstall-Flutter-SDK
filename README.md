@@ -12,7 +12,7 @@
 dependencies:
   ...
   # 依赖XInstall
-  xinstall_flutter_plugin: ^1.7.5
+  xinstall_flutter_plugin: ^1.7.6
 ```
 终端进入项目目录并输入 flutter pub get 安装
 

@@ -29,7 +29,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   #   依赖XInstall
-#  xinstall_flutter_plugin: ^1.7.5
+#  xinstall_flutter_plugin: ^1.7.6
   # 本地依赖 XInstall
   xinstall_flutter_plugin:
     path: ../
@@ -40,7 +40,7 @@ dev_dependencies:
 
   flutter_lints: ^5.0.0
 #   依赖XInstall
-#  xinstall_flutter_plugin: ^1.7.5
+#  xinstall_flutter_plugin: ^1.7.6
 ## 本地依赖
   xinstall_flutter_plugin:
     path: ../

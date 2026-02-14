@@ -55,7 +55,7 @@ android {
 
 dependencies {
     compileOnly("androidx.annotation:annotation:1.1.0")
-    implementation("com.xinstall:xinstall_flutter_plugin:1.7.5")
+    implementation("com.xinstall:xinstall_flutter_plugin:1.7.6")
 }
 
 flutter {

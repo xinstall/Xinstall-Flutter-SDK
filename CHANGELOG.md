@@ -17,3 +17,7 @@
 * SDK 升级到1.7.5
 * 适配 Flutter 3.35.0新版本，示例应用example优化
 * 新增 setDebug 方法用于控制 SDK 调试日志
+
+## 1.7.6
+* Android、iOS 原生SDK 升级到1.7.6
+* 网络安全
